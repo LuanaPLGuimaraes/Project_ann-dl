@@ -9,17 +9,10 @@ ao longo do semestre, cada uma com data e peso próprios.
 
 ## Equipe
 
-!!! danger "Preencha antes de qualquer entrega"
-
-    Toda entrega do projeto é avaliada em equipe. Se os nomes não estiverem aqui, não há
-    como atribuir a nota — e o mesmo vale para o `mkdocs.yml`, cujo `site_author` deve
-    listar o grupo.
-
 | Nome completo | E-mail | GitHub |
 |---------------|--------|--------|
-| | | |
-| | | |
-| | | |
+| Luana Prado Lopes Guimaraes | luanaplg@al.insper.edu.br | LuanaPLGuimaraes |
+| Laura Pontiroli Machado | laurapm@alinsper.edu.br | laupontiroli |
 
 Times de 2 a 3 pessoas. Repita esses nomes no cabeçalho de cada entrega — quem corrige pode
 abrir uma página sozinha, sem passar por aqui.
@@ -29,11 +22,11 @@ abrir uma página sozinha, sem passar por aqui.
 | # | Entrega | Página |
 |---|---------|--------|
 | 1 | EDA | [EDA](eda/index.md) |
-| 2 | Classificação **ou** Regressão | [Classificação](classification/index.md) · [Regressão](regression/index.md) |
+| 2 | Classificação | [Classificação](classification/index.md) |
 | 3 | Generativo | [Generativo](generative/index.md) |
 
 Datas e pesos são da sua edição — veja o
-[overview](https://insper.github.io/ann-dl/){:target='_blank'}.
+[overview](https://insper.github.io/ann-dl/pt/2026.2/){:target='_blank'}.
 
 !!! danger "A nota do projeto costuma ser limitada por uma prova sobre o próprio projeto"
 
@@ -41,42 +34,33 @@ Datas e pesos são da sua edição — veja o
     entregou. Escreva os relatórios de modo que você consiga defendê-los meses depois, e
     confira no overview da sua edição como a prova entra na nota.
 
-!!! warning "Escolha uma: classificação ou regressão"
-
-    A segunda entrega é **uma das duas**, não as duas. Este template traz as duas pastas
-    para você escolher; depois de decidir, apague a que não vai usar — da pasta `docs/projects/`
-    **e** da `nav` no `mkdocs.yml`.
-
 ## Dataset
-
-O mesmo dataset atravessa as três entregas — escolhê-lo bem no EDA é o que torna as outras
-duas viáveis.
 
 | | |
 |---|---|
-| **Nome** | |
-| **Fonte (URL)** | |
-| **Licença / termos de uso** | |
-| **Amostras** | |
-| **Features** | |
-| **Variável alvo** | |
-| **Tarefa escolhida** | Classificação ou Regressão |
+| **Nome** | Predicting Electric Vehicle Purchases — Kaggle Playground Series S6E9 |
+| **Fonte (URL)** | https://www.kaggle.com/competitions/playground-series-s6e9 |
+| **Licença / termos de uso** | Regras da competição Kaggle (conferir aba "Rules" antes da entrega final) |
+| **Amostras** | 668.665 (treino) |
+| **Features** | 13 (7 numéricas + 6 categóricas) |
+| **Variável alvo** | `Will_Buy_EV` (binária: Yes/No) |
+| **Tarefa escolhida** | Classificação |
 
-Justifique em 3–5 linhas: por que este dataset, e o que nele torna a tarefa escolhida
-interessante em vez de trivial.
+Dataset tabular sobre comportamento de compra de veículos elétricos, combinando dados
+demográficos (idade, renda, tipo de cidade) e comportamentais (ansiedade de autonomia,
+disponibilidade de carregador em casa/trabalho, subsídio disponível). É uma tarefa de
+classificação binária não trivial: o target é desbalanceado (~82% não compra / ~18%
+compra), e algumas features (ex. `Subsidy_Available`, `Home_Charging_Possible`) têm relação
+óbvia com o alvo, então parte do trabalho é avaliar risco de vazamento vs. sinal legítimo.
 
 ## Status
 
-- [ ] **1. EDA**
-- [ ] **2. Classificação ou Regressão**
+- [x] **1. EDA** — proposta em andamento
+- [ ] **2. Classificação**
 - [ ] **3. Generativo**
 
 ## Registro de decisões
 
-Anote aqui as decisões que atravessam as entregas — troca de dataset, mudança de alvo,
-recorte de features — com a data. É o que permite reconstruir o raciocínio na prova de
-projeto.
-
 | Data | Decisão | Motivo |
 |------|---------|--------|
-| | | |
+| 2026-09-15 | Dataset: EV Purchase Prediction (Kaggle S6E9). Fase 2: Classificação (não Regressão) | Target `Will_Buy_EV` já é categórico/binário — classificação é a tarefa natural |

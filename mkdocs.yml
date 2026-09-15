@@ -135,8 +135,7 @@ extra_javascript:
 # =============================================================================
 nav:
   - Home: index.md
-  - Como usar este template: template/index.md
-  
+
   - Projeto:
     - projects/index.md
     - 1. EDA: projects/eda/index.md
