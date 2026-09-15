@@ -1,55 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://repo-classes.github.io/ann-dl/</loc>
+         <loc>https://luanaplguimaraes.github.io/Project_ann-dl/</loc>
          <lastmod>2026-09-15</lastmod>
     </url>
     <url>
-         <loc>https://repo-classes.github.io/ann-dl/examples/</loc>
+         <loc>https://luanaplguimaraes.github.io/Project_ann-dl/projects/</loc>
          <lastmod>2026-09-15</lastmod>
     </url>
     <url>
-         <loc>https://repo-classes.github.io/ann-dl/examples/notebook/data-exercise-1/</loc>
+         <loc>https://luanaplguimaraes.github.io/Project_ann-dl/projects/classification/</loc>
          <lastmod>2026-09-15</lastmod>
     </url>
     <url>
-         <loc>https://repo-classes.github.io/ann-dl/exercises/data/</loc>
+         <loc>https://luanaplguimaraes.github.io/Project_ann-dl/projects/eda/</loc>
          <lastmod>2026-09-15</lastmod>
     </url>
     <url>
-         <loc>https://repo-classes.github.io/ann-dl/exercises/mlp/</loc>
+         <loc>https://luanaplguimaraes.github.io/Project_ann-dl/projects/generative/</loc>
          <lastmod>2026-09-15</lastmod>
     </url>
     <url>
-         <loc>https://repo-classes.github.io/ann-dl/exercises/perceptron/</loc>
-         <lastmod>2026-09-15</lastmod>
-    </url>
-    <url>
-         <loc>https://repo-classes.github.io/ann-dl/exercises/vae/</loc>
-         <lastmod>2026-09-15</lastmod>
-    </url>
-    <url>
-         <loc>https://repo-classes.github.io/ann-dl/projects/</loc>
-         <lastmod>2026-09-15</lastmod>
-    </url>
-    <url>
-         <loc>https://repo-classes.github.io/ann-dl/projects/classification/</loc>
-         <lastmod>2026-09-15</lastmod>
-    </url>
-    <url>
-         <loc>https://repo-classes.github.io/ann-dl/projects/eda/</loc>
-         <lastmod>2026-09-15</lastmod>
-    </url>
-    <url>
-         <loc>https://repo-classes.github.io/ann-dl/projects/generative/</loc>
-         <lastmod>2026-09-15</lastmod>
-    </url>
-    <url>
-         <loc>https://repo-classes.github.io/ann-dl/projects/regression/</loc>
-         <lastmod>2026-09-15</lastmod>
-    </url>
-    <url>
-         <loc>https://repo-classes.github.io/ann-dl/template/</loc>
+         <loc>https://luanaplguimaraes.github.io/Project_ann-dl/template/</loc>
          <lastmod>2026-09-15</lastmod>
     </url>
 </urlset>
