@@ -11,11 +11,10 @@ ai_use: "none"
 
 !!! info "Equipe"
 
-    | Nome completo | GitHub |
-    |---------------|--------|
-    | | |
-    | | |
-    | | |
+    | Nome completo | E-mail | GitHub |
+    |---------------|--------|--------|
+    | Luana Prado Lopes Guimaraes | luanaplg@al.insper.edu.br | LuanaPLGuimaraes |
+    | Laura Pontiroli Machado | laurapm@alinsper.edu.br | laupontiroli |
 
     Dataset, decisões e status: [página do projeto](../index.md).
 
@@ -33,22 +32,41 @@ ai_use: "none"
 
 ## 1. Dataset
 
-Nome, fonte, licença, dimensões e **por que** este dataset. Se houve troca em relação a uma
-ideia anterior, diga qual e por quê.
+- **Nome:** Playground Series — Season 6, Episode 9 (Predicting Electric Vehicle Purchases)
+- **Fonte:** Kaggle, competição "Playground Series S6E9"
+- **Licença:** dataset sintético disponibilizado para a competição, uso autorizado para fins de estudo/competição conforme as regras do Playground Series
+- **Dimensões:** 668.665 amostras no total, divididas em 534.932 (treino) e 133.733 (teste), split 80/20 estratificado pelo alvo, `random_state=42`. 13 features + `id` (identificador) + alvo `Will_Buy_EV`
+- **Por que este dataset:** Dataset de competition interessante que se enquadrava como interesse pelas duas da dupla. Outros datasets foram considerados e analisados mas esse se destacou como maior interesse para ambas.
 
 ## 2. Estrutura e tipos
 
-Quantas amostras, quantas features, e o tipo de cada uma (numérica contínua, discreta,
-categórica nominal, ordinal, data, texto). Aponte as que estão com o tipo errado no arquivo
-bruto — um CEP lido como inteiro é numérico para o pandas e categórico para o modelo.
+534.932 amostras no conjunto de treino, 13 features (fora `id` e o alvo).
 
 | Feature | Tipo | Cardinalidade / faixa | Observação |
 |---------|------|-----------------------|------------|
-| | | | |
+| id | Identificador | 534.932 valores únicos | Não é feature |
+| Age | Numérica discreta | 45 valores únicos | Idade em anos inteiros |
+| Annual_Income_USD | Numérica contínua | 12.406 valores únicos | Alta granularidade, renda |
+| Daily_Commute_km | Numérica contínua | 794 valores únicos | Distância de deslocamento diário |
+| Number_of_Cars_Owned | Numérica discreta | 4 valores únicos | Contagem de carros |
+| Charging_Stations_Near_Home | Numérica discreta | 15 valores únicos | Contagem |
+| Charging_Stations_Near_Work | Numérica discreta | 20 valores únicos | Contagem |
+| Environmental_Concern_Level | Ordinal discreta | 5 níveis (1–5) | Lida como `float64` pelo pandas, mas é escala ordenada, não contínua |
+| Gender | Categórica nominal | Female, Male, Other | Sem ordem natural |
+| City_Type | Categórica nominal | Suburban, Urban, Rural | Sem ordem adotada |
+| Current_Car_Type | Categórica nominal | SUV, Sedan, Truck, Hatchback | Sem ordem natural |
+| Home_Charging_Possible | Categórica binária | 2 categorias (Yes/No) | - |
+| Subsidy_Available | Categórica binária | 2 categorias (Yes/No) | - |
+| Range_Anxiety_Level | Categórica ordinal | Low, Medium, High | Lida como `object` pelo pandas |
+
 
 ## 3. Variável alvo
 
-Distribuição do alvo e o que ela implica.
+- **Proporção por classe:** `No` = 82,54% / `Yes` = 17,46%
+- **Razão entre maior e menor classe:** = 4,73
+- **Baseline:** um classificador que sempre responde `No` acerta **82,54%** — esse é o número que a entrega de classificação precisa superar
+
+/// continuar daqui 
 
 - **Classificação:** proporção por classe, razão entre a maior e a menor.
 - **Regressão:** distribuição, assimetria, cauda, presença de zeros ou censura.

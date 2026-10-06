@@ -1,7 +1,5 @@
 # Redes Neurais Artificiais & Deep Learning
 
-???+ info inline end "Edição"
-
     **2026.2**
 
     [Enunciados :material-open-in-new:](https://insper.github.io/ann-dl/pt/2026.2/){:target='_blank'}

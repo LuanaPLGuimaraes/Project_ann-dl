@@ -14,9 +14,6 @@ ao longo do semestre, cada uma com data e peso próprios.
 | Luana Prado Lopes Guimaraes | luanaplg@al.insper.edu.br | LuanaPLGuimaraes |
 | Laura Pontiroli Machado | laurapm@alinsper.edu.br | laupontiroli |
 
-Times de 2 a 3 pessoas. Repita esses nomes no cabeçalho de cada entrega — quem corrige pode
-abrir uma página sozinha, sem passar por aqui.
-
 ## As três entregas
 
 | # | Entrega | Página |
