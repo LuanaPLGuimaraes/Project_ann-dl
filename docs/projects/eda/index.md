@@ -117,7 +117,7 @@ categorias), já estão descritas pela tabela.
 - **`Age`**: distribuição aproximadamente uniforme entre 25 e 69 anos, sem assimetria nem
   concentração em nenhuma faixa específica.
 - **`Annual_Income_USD`**: formato com leve assimetria à direita, mas com uma concentração
-  anômala de **9,20%** das amostras exatamente no valor mínimo (30.000), destoando do restante
+  anômala de 9,20% das amostras exatamente no valor mínimo (30.000), destoando do restante
   da curva.
 - **`Daily_Commute_km`**: mesmo padrão, de forma ainda mais intensa, 21,59% das amostras
   caem exatamente no valor mínimo (5,0 km), o que é  improvável para uma medida contínua de distância.
