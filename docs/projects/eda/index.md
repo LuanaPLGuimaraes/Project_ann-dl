@@ -56,36 +56,79 @@ ai_use: "none"
 | City_Type | Categórica nominal | Suburban, Urban, Rural | Sem ordem adotada |
 | Current_Car_Type | Categórica nominal | SUV, Sedan, Truck, Hatchback | Sem ordem natural |
 | Home_Charging_Possible | Categórica binária | 2 categorias (Yes/No) | - |
-| Subsidy_Available | Categórica binária | 2 categorias (Yes/No) | - |
+| Subsidy_Available | Categórica binária | 2 categorias (Yes/No) | Possível risco de vazamento — retomar na seção de riscos |
 | Range_Anxiety_Level | Categórica ordinal | Low, Medium, High | Lida como `object` pelo pandas |
 
 
 ## 3. Variável alvo
 
 - **Proporção por classe:** `No` = 82,54% / `Yes` = 17,46%
-- **Razão entre maior e menor classe:** = 4,73
-- **Baseline:** um classificador que sempre responde `No` acerta **82,54%** — esse é o número que a entrega de classificação precisa superar
+- **Razão entre maior e menor classe:** ≈ 4,73
+- **Baseline:** um classificador que sempre responde `No` acerta **82,54%** — a classificação precisa superar esse valor
 
-/// continuar daqui 
-
-- **Classificação:** proporção por classe, razão entre a maior e a menor.
-- **Regressão:** distribuição, assimetria, cauda, presença de zeros ou censura.
-
-![Distribuição da variável alvo](figures/fig01-exemplo.svg)
+![Distribuição da variável alvo](figures/fig01-distribuicao-alvo.svg)
 /// caption
-**Figura 1** — Distribuição da variável alvo.
+**Figura 1** — Distribuição da variável alvo (`Will_Buy_EV`) no conjunto de treino.
 ///
 
-!!! question "Responda"
-
-    O quão desbalanceado está? Um classificador que sempre responde a classe majoritária
-    acerta quantos por cento? Esse número é o seu *baseline* — as entregas seguintes precisam
-    superá-lo.
+O alvo está desbalanceado numa razão de aproximadamente 4,73:1 entre as classes `No` e
+`Yes`. Um classificador trivial que sempre responde `No` (a classe majoritária) já acerta
+82,54% das amostras sem aprender nada sobre os dados — esse é o nosso *baseline*. Qualquer
+modelo de classificação treinado nas próximas entregas só tem valor real se superar essa
+acurácia; caso contrário, ele não está aprendendo nada além da proporção das classes.
 
 ## 4. Análise univariada
 
-Distribuição de cada feature relevante: medidas de posição e dispersão, e o formato.
-Não gere 40 histogramas; escolha os que mudam alguma decisão e explique o critério.
+### Medidas de posição e dispersão
+
+| Feature | mean | std | min | 25% | 50% | 75% | max |
+|---|---|---|---|---|---|---|---|
+| Age | 47,02 | 12,87 | 25,0 | 36,0 | 47,0 | 58,0 | 69,0 |
+| Annual_Income_USD | 84.754,35 | 28.623,91 | 30.000,0 | 67.380,0 | 84.870,0 | 102.751,0 | 188.549,0 |
+| Daily_Commute_km | 32,15 | 18,73 | 5,0 | 17,2 | 33,6 | 47,4 | 98,7 |
+| Number_of_Cars_Owned | 1,71 | 0,73 | 1,0 | 1,0 | 2,0 | 2,0 | 4,0 |
+| Charging_Stations_Near_Home | 4,96 | 3,93 | 0,0 | 2,0 | 4,0 | 7,0 | 14,0 |
+| Charging_Stations_Near_Work | 7,17 | 5,18 | 0,0 | 3,0 | 6,0 | 10,0 | 19,0 |
+| Environmental_Concern_Level | 2,93 | 1,43 | 1,0 | 2,0 | 3,0 | 4,0 | 5,0 |
+
+### Formato (histogramas)
+
+Das 7 features acima, só 3 têm alta cardinalidade (`Age` = 45 valores únicos,
+`Annual_Income_USD` = 12.406, `Daily_Commute_km` = 794) — essas são as únicas cujo formato
+torna mais difícil de entender apenas pela tabela de posição/dispersão acima, por isso elas recebem
+histograma individual. As demais, por terem poucos valores distintos (contagens de 4 a 20
+categorias), já estão descritas pela tabela.
+
+![Distribuição de Age](figures/fig02-age.svg)
+/// caption
+**Figura 2** — Distribuição de `Age` no conjunto de treino.
+///
+
+![Distribuição de Annual_Income_USD](figures/fig03-annual-income-usd.svg)
+/// caption
+**Figura 3** — Distribuição de `Annual_Income_USD` no conjunto de treino.
+///
+
+![Distribuição de Daily_Commute_km](figures/fig04-daily-commute-km.svg)
+/// caption
+**Figura 4** — Distribuição de `Daily_Commute_km` no conjunto de treino.
+///
+
+- **`Age`**: distribuição aproximadamente uniforme entre 25 e 69 anos, sem assimetria nem
+  concentração em nenhuma faixa específica.
+- **`Annual_Income_USD`**: formato com leve assimetria à direita, mas com uma concentração
+  anômala de **9,20%** das amostras exatamente no valor mínimo (30.000), destoando do restante
+  da curva.
+- **`Daily_Commute_km`**: mesmo padrão, de forma ainda mais intensa, 21,59% das amostras
+  caem exatamente no valor mínimo (5,0 km), o que é  improvável para uma medida contínua de distância.
+
+!!! warning "Achado: valor mínimo pode ser não-resposta disfarçada"
+
+    As concentrações exatas no valor mínimo em `Annual_Income_USD` e `Daily_Commute_km`
+    não aparecem como `NaN`, mas o padrão (pico isolado, exatamente no piso da
+    escala, destoa do resto da distribuição) sugere que esses valores representam
+    respostas ausentes definidas como o mínimo da escala, em vez de dados reais. O
+    tratamento desse achado será definido posteriormente.
 
 ## 5. Análise bivariada e correlações
 
