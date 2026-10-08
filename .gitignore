@@ -3,4 +3,5 @@ env/
 .cache/
 .vscode/
 target/
-data/
+*.csv
+.venv

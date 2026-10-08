@@ -18,17 +18,6 @@ ai_use: "none"
 
     Dataset, decisões e status: [página do projeto](../index.md).
 
-!!! tip "O que esta entrega decide"
-
-    O EDA não é um álbum de gráficos: é onde a equipe **escolhe o dataset** e descobre o que
-    vai atrapalhar o treino depois — desbalanceamento, vazamento, escalas incompatíveis com a
-    ativação, ausências não aleatórias. Cada achado aqui deve virar uma linha do plano de
-    pré-processamento no fim da página, e é esse plano que as duas entregas
-    seguintes executam.
-
-    As aulas de **Classes → Data** no
-    [site da disciplina](https://insper.github.io/ann-dl/){:target='_blank'} dão a estrutura:
-    tipos, distribuições, qualidade, desbalanceamento, vazamento, split e pré-processamento.
 
 ## 1. Dataset
 

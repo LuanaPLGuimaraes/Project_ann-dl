@@ -1,0 +1,101 @@
+=== Split ===
+treino: (534932, 15) | teste: (133733, 15)
+
+=== Distribuição do alvo (treino) ===
+Will_Buy_EV
+0    0.825355
+1    0.174645
+
+=== Tipos e cardinalidade ===
+                               dtype  nunique
+id                             int64   534932
+Age                            int64       45
+Annual_Income_USD            float64    12406
+Daily_Commute_km             float64      794
+Number_of_Cars_Owned           int64        4
+Charging_Stations_Near_Home    int64       15
+Charging_Stations_Near_Work    int64       20
+Environmental_Concern_Level  float64        5
+Gender                           str        3
+City_Type                        str        3
+Current_Car_Type                 str        4
+Home_Charging_Possible           str        2
+Subsidy_Available                str        2
+Range_Anxiety_Level              str        3
+Will_Buy_EV                    int64        2
+
+=== Nulos e duplicatas ===
+sem valores nulos
+linhas duplicadas: 0
+
+=== Estatísticas descritivas (numéricas) ===
+                                count      mean       std      min      25%      50%       75%       max
+Age                          534932.0     47.02     12.87     25.0     36.0     47.0      58.0      69.0
+Annual_Income_USD            534932.0  84754.35  28623.91  30000.0  67380.0  84870.0  102751.0  188549.0
+Daily_Commute_km             534932.0     32.15     18.73      5.0     17.2     33.6      47.4      98.7
+Number_of_Cars_Owned         534932.0      1.71      0.73      1.0      1.0      2.0       2.0       4.0
+Charging_Stations_Near_Home  534932.0      4.96      3.93      0.0      2.0      4.0       7.0      14.0
+Charging_Stations_Near_Work  534932.0      7.17      5.18      0.0      3.0      6.0      10.0      19.0
+Environmental_Concern_Level  534932.0      2.93      1.43      1.0      2.0      3.0       4.0       5.0
+
+=== Categorias (frequência relativa) ===
+
+Gender:
+Gender
+Male      0.550
+Female    0.442
+Other     0.008
+
+City_Type:
+City_Type
+Urban       0.433
+Suburban    0.382
+Rural       0.185
+
+Current_Car_Type:
+Current_Car_Type
+Sedan        0.454
+SUV          0.369
+Hatchback    0.119
+Truck        0.059
+
+Home_Charging_Possible:
+Home_Charging_Possible
+Yes    0.692
+No     0.308
+
+Subsidy_Available:
+Subsidy_Available
+Yes    0.628
+No     0.372
+
+Range_Anxiety_Level:
+Range_Anxiety_Level
+Low       0.903
+Medium    0.093
+High      0.003
+
+=== Outliers (IQR) ===
+Age: 0 outliers (0.00%)
+Annual_Income_USD: 2926 outliers (0.55%)
+Daily_Commute_km: 37 outliers (0.01%)
+
+=== Acúmulo no valor mínimo ===
+Annual_Income_USD: 49191 amostras (9.20%) no valor mínimo (30000.0)
+Daily_Commute_km: 115506 amostras (21.59%) no valor mínimo (5.0)
+
+=== Figuras salvas ===
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig01-distribuicao-alvo.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig02-age.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig03-annual-income-usd.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig04-daily-commute-km.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig05-age-por-alvo.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig06-annual-income-usd-por-alvo.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig07-daily-commute-km-por-alvo.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig08-gender-por-alvo.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig09-city-type-por-alvo.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig10-current-car-type-por-alvo.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig11-home-charging-possible-por-alvo.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig12-subsidy-available-por-alvo.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig13-range-anxiety-level-por-alvo.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig14-correlacao.svg
