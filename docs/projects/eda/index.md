@@ -65,7 +65,7 @@ ai_use: "Uso assistido de IA para estruturar a análise, revisar código, discut
 
 O alvo está desbalanceado numa razão de aproximadamente 4,73:1 entre as classes `No` e
 `Yes`. Um classificador trivial que sempre responde `No` (a classe majoritária) já acerta
-82,54% das amostras sem aprender nada sobre os dados — esse é o nosso *baseline*. Qualquer
+82,54% das amostras sem aprender nada sobre os dados, sendo esse o nosso *baseline*. Qualquer
 modelo de classificação treinado nas próximas entregas só tem valor real se superar essa
 acurácia; caso contrário, ele não está aprendendo nada além da proporção das classes.
 
@@ -86,10 +86,9 @@ acurácia; caso contrário, ele não está aprendendo nada além da proporção 
 ### Formato (histogramas)
 
 Das 7 features acima, só 3 têm alta cardinalidade (`Age` = 45 valores únicos,
-`Annual_Income_USD` = 12.406, `Daily_Commute_km` = 794) — essas são as únicas cujo formato
+`Annual_Income_USD` = 12.406, `Daily_Commute_km` = 794), essas são as únicas cujo formato
 torna mais difícil de entender apenas pela tabela de posição/dispersão acima, por isso elas recebem
-histograma individual. As demais, por terem poucos valores distintos (contagens de 4 a 20
-categorias), já estão descritas pela tabela.
+histograma individual. As demais, por terem poucos valores distintos, já estão descritas pela tabela.
 
 ![Distribuição de Age](figures/fig02-age.svg)
 /// caption
@@ -138,12 +137,12 @@ monotônica sem supor normalidade e é menos sensível a esses picos. Na prátic
 concordam: o par mais correlacionado tem ρ = +0,543 (Spearman) e r = +0,510 (Pearson), e as demais
 células diferem em no máximo 0,03.
 
-![Matriz de correlação de Spearman](figures/fig08-correlacao.svg)
+![Matriz de correlação de Spearman](figures/fig05-correlacao.svg)
 /// caption
-**Figura 8** — Correlação de Spearman entre as 7 numéricas (treino).
+**Figura 5** — Correlação de Spearman entre as 7 numéricas (treino).
 ///
 
-**Conclusão (Fig. 8).** O par mais correlacionado é **`Charging_Stations_Near_Home` ×
+**Conclusão (Fig. 5).** O par mais correlacionado é **`Charging_Stations_Near_Home` ×
 `Charging_Stations_Near_Work` (ρ = +0,543)**. É uma correlação moderada, **abaixo do limiar de 0,7** que
 usamos para chamar um par de redundante: nenhum dos 21 pares passa dele. O segundo maior é
 `Annual_Income_USD` × `Environmental_Concern_Level` (ρ = +0,075), e todos os demais ficam abaixo de
@@ -151,14 +150,14 @@ usamos para chamar um par de redundante: nenhum dos 21 pares passa dele. O segun
 carregamento ficam, porque cada uma tem relação quase nula com o alvo (ρ = −0,022 e −0,014) e a
 colinearidade moderada não prejudica uma rede neural.
 
-![Scatter dos pares mais correlacionados](figures/fig09-scatter-pares.svg)
+![Scatter dos pares mais correlacionados](figures/fig06-scatter-pares.svg)
 /// caption
-**Figura 9** — Dispersão dos 3 pares numéricos mais correlacionados (amostra de 5.000 linhas do treino).
+**Figura 6** — Dispersão dos 3 pares numéricos mais correlacionados (amostra de 5.000 linhas do treino).
 ///
 
-**Conclusão (Fig. 9).** no par das estações de carregamento a nuvem
+**Conclusão (Fig. 6).** No par das estações de carregamento a nuvem
 mostra tendência positiva, em grade, porque as duas variáveis são contagens inteiras; nos outros dois pares
-(ρ = +0,075 e +0,043) não há padrão visível. Isso **confirma** a conclusão da Figura 8: só um par tem
+(ρ = +0,075 e +0,043) não há padrão visível. Isso **confirma** a conclusão da Figura 5: só um par tem
 relação apreciável, e ela é moderada.
 
 **Correlação com o alvo.** As numéricas mais associadas a `Will_Buy_EV` são
@@ -171,12 +170,12 @@ associação monotônica detectável com o alvo individualmente.
 Em cada figura, a linha tracejada é a taxa geral de `Yes` (17,46%). Barras longe dela indicam
 categorias que mudam a probabilidade de compra.
 
-![Subsidy_Available e Home_Charging_Possible vs alvo](figures/fig10-cat-vs-alvo-1.svg)
+![Subsidy_Available e Home_Charging_Possible vs alvo](figures/fig07-cat-vs-alvo-1.svg)
 /// caption
-**Figura 10** — Proporção de `Yes` por categoria de `Subsidy_Available` e `Home_Charging_Possible`.
+**Figura 7** — Proporção de `Yes` por categoria de `Subsidy_Available` e `Home_Charging_Possible`.
 ///
 
-**Conclusão (Fig. 10).**
+**Conclusão (Fig. 7).**
 
 - **`Subsidy_Available`:** sem subsídio (198.952 linhas) a taxa de `Yes` é de apenas **0,57%**; com
   subsídio (335.980 linhas) é de **27,47%**, cerca de 48 vezes maior. Estimamos, a partir dessas taxas e
@@ -186,82 +185,82 @@ categorias que mudam a probabilidade de compra.
   É um efeito real, mas moderado.
 
 **Decisão sobre `Subsidy_Available`.** Não a classificamos como vazamento, porque **não é derivada do
-alvo**: (conferir secção de vazamento de dados). É uma condição que existe antes da decisão de compra
+alvo**: (conferir seção de vazamento de dados). É uma condição que existe antes da decisão de compra
 e tem leitura econômica direta. Mas a relação é tão forte que o modelo pode se apoiar quase só nela e
 mascarar as outras features. Por isso **vamos treinar com e sem `Subsidy_Available`** na entrega de
 Classificação e comparar as métricas. O `preprocess.py` já aceita as duas versões (`use_subsidy=True/False`).
 
-![Range_Anxiety_Level e City_Type vs alvo](figures/fig11-cat-vs-alvo-2.svg)
+![Range_Anxiety_Level e City_Type vs alvo](figures/fig08-cat-vs-alvo-2.svg)
 /// caption
-**Figura 11** — Proporção de `Yes` por `Range_Anxiety_Level` e `City_Type`.
+**Figura 8** — Proporção de `Yes` por `Range_Anxiety_Level` e `City_Type`.
 ///
 
-**Conclusão (Fig. 11).**
+**Conclusão (Fig. 8).**
 
 - **`Range_Anxiety_Level`:** a taxa cai de **18,90%** (Low, 483.239 linhas, 90,3% do treino) para
   **4,18%** (Medium, 49.920 linhas) e **0,11%** (High, 1.773 linhas). A relação é monotônica e quase
   determinística nos níveis Medium e High: quem tem ansiedade de autonomia acima de Low praticamente nunca
   compra.
-- **Decisão: descartamos `Range_Anxiety_Level`.** (verificar secção de vazamento de dados). Uma feature construída a partir do que
+- **Decisão: descartamos `Range_Anxiety_Level`.** (verificar seção de vazamento de dados). Uma feature construída a partir do que
   queremos prever carrega o rótulo para dentro do modelo e inflaria as métricas sem generalizar. Ela fica
   visível nesta figura só como evidência da decisão; fora desta seção, não entra em nenhum modelo nem nas projeções
   PCA, t-SNE e UMAP.
 - **`City_Type`:** Rural 19,34%, Suburban 18,13%, Urban 16,07%. A amplitude é de **3,27 p.p.**, efeito
   pequeno.
 
-![Current_Car_Type e Gender vs alvo](figures/fig12-cat-vs-alvo-3.svg)
+![Current_Car_Type e Gender vs alvo](figures/fig09-cat-vs-alvo-3.svg)
 /// caption
-**Figura 12** — Proporção de `Yes` por `Current_Car_Type` e `Gender`.
+**Figura 9** — Proporção de `Yes` por `Current_Car_Type` e `Gender`.
 ///
 
-**Conclusão (Fig. 12).** `Current_Car_Type` varia de 15,75% (Truck) a 18,12% (SUV), amplitude de
+**Conclusão (Fig. 9).** `Current_Car_Type` varia de 15,75% (Truck) a 18,12% (SUV), amplitude de
 **2,37 p.p.**, e `Gender` varia de 17,25% (Male) a 17,76% (Other), apenas **0,51 p.p.** Nenhuma das duas
 tem poder preditivo relevante sozinha. `Gender = Other` tem só 4.250 linhas (0,8% do treino), então a taxa dessa
 categoria é a menos estável.
 
 ### 5.C Numérica × categórica
 
-![Annual_Income_USD por City_Type](figures/fig13-box-annual-income-usd.svg)
+![Annual_Income_USD por City_Type](figures/fig10-box-annual-income-usd.svg)
 /// caption
-**Figura 13** — `Annual_Income_USD` por `City_Type` (treino).
+**Figura 10** — `Annual_Income_USD` por `City_Type` (treino).
 ///
 
-**Conclusão (Fig. 13).** As medianas são praticamente iguais: Rural 84.768, Suburban 85.475 e
+**Conclusão (Fig. 10).** As medianas são praticamente iguais: Rural 84.768, Suburban 85.475 e
 Urban 84.748 (diferença máxima de 727, menos de 1%). O espalhamento difere pouco: o IQR é de 38.422 em
 Rural contra 34.738 em Suburban e 34.091 em Urban (de 10% a 13% maior em Rural). Os grupos **não diferem em
 posição e diferem levemente em espalhamento**, com a zona rural mais dispersa. A renda não depende do
 tipo de cidade.
 
-![Daily_Commute_km por Current_Car_Type](figures/fig14-box-daily-commute-km.svg)
+![Daily_Commute_km por Current_Car_Type](figures/fig11-box-daily-commute-km.svg)
 /// caption
-**Figura 14** — `Daily_Commute_km` por `Current_Car_Type` (treino).
+**Figura 11** — `Daily_Commute_km` por `Current_Car_Type` (treino).
 ///
 
-**Conclusão (Fig. 14).** As medianas ficam entre 33,0 km (Sedan) e 34,2 km (SUV), amplitude de 1,2 km. O IQR
+**Conclusão (Fig. 11).** As medianas ficam entre 33,0 km (Sedan) e 34,2 km (SUV), amplitude de 1,2 km. O IQR
 vai de 29,40 (Hatchback) a 32,57 (Truck), e o desvio-padrão de 18,56 a 19,20. Os grupos **não diferem em
 posição e quase não diferem em espalhamento**; Truck é o mais disperso. Os 21,59% de linhas no
 piso de 5,0 km estão em todos os grupos e achatam o limite inferior das caixas.
 
-![Annual_Income_USD por Will_Buy_EV](figures/fig15-box-annual-income-usd.svg)
+![Annual_Income_USD por Will_Buy_EV](figures/fig12-box-annual-income-usd.svg)
 /// caption
-**Figura 15** — `Annual_Income_USD` por `Will_Buy_EV` (treino).
+**Figura 12** — `Annual_Income_USD` por `Will_Buy_EV` (treino).
 ///
 
-**Conclusão (Fig. 15).** A mediana da renda é **95.966** para `Yes` (93.423 linhas) e **82.823** para `No` (441.509 linhas), uma diferença de 13.143 (cerca de 16% maior entre compradores). O espalhamento é parecido: IQR de 34.987 contra 33.258 e desvio-padrão de 26.273 contra 28.217. Os grupos diferem **em posição, não em espalhamento**: quem compra tem renda mediana mais alta, mas a variabilidade é a mesma. Isso é coerente com ρ = +0,224 entre renda e alvo (Seção 5.A), uma associação real porém moderada, já que as duas caixas se sobrepõem bastante.
+**Conclusão (Fig. 12).** A mediana da renda é **95.966** para `Yes` (93.423 linhas) e **82.823** para `No` (441.509 linhas), uma diferença de 13.143 (cerca de 16% maior entre compradores). O espalhamento é parecido: IQR de 34.987 contra 33.258 e desvio-padrão de 26.273 contra 28.217. Os grupos diferem **em posição, não em espalhamento**: quem compra tem renda mediana mais alta, mas a variabilidade é a mesma. Isso é coerente com ρ = +0,224 entre renda e alvo (Seção 5.A), uma associação real porém moderada, já que as duas caixas se sobrepõem bastante.
 
 ### 5.D Síntese da seção
 
 - **Sem redundância forte entre numéricas.** O maior ρ é 0,543 (estações de carregamento em casa e no
-  trabalho), abaixo de 0,7; nenhuma numérica é removida por correlação (Fig. 8).
+  trabalho), abaixo de 0,7; nenhuma numérica é removida por correlação (Fig. 5).
 - **O sinal numérico está em `Environmental_Concern_Level` (ρ = +0,461) e `Annual_Income_USD`
-  (ρ = +0,224).** Compradores têm renda mediana de 95.966 contra 82.823 dos não compradores (Fig. 15).
+  (ρ = +0,224).** Compradores têm renda mediana de 95.966 contra 82.823 dos não compradores (Fig. 12).
   As demais numéricas têm |ρ| ≤ 0,044 com o alvo.
 - **`Range_Anxiety_Level` é descartada** (derivada do alvo): 0,11% de `Yes` em High e 4,18% em Medium
-  (Fig. 11).
-- **`Subsidy_Available` é a categórica mais forte** (0,57% contra 27,47%, Fig. 10), mas não é derivada
+  (Fig. 8).
+- **`Subsidy_Available` é a categórica mais forte** (0,57% contra 27,47%, Fig. 7), mas não é derivada
   do alvo; será testada com e sem na Classificação.
 - **`Gender`, `City_Type` e `Current_Car_Type` têm efeito pequeno** (amplitudes de 0,51, 3,27 e 2,37 p.p.,
-  Figs. 11 e 12), e renda e deslocamento não variam com cidade ou carro (Figs. 13 e 14).
+  Figs. 8 e 9), e renda e deslocamento não variam com cidade ou carro (Figs. 10 e 11).
 - **Implicação para a modelagem:** o desbalanceamento (17,46% de `Yes`) e a dependência de poucas features
   (`Subsidy_Available`, `Environmental_Concern_Level`, `Annual_Income_USD`) são os riscos principais.
   Comparar o desempenho com e sem `Subsidy_Available` mostra quanto o modelo depende dela.
