@@ -185,7 +185,9 @@ categorias que mudam a probabilidade de compra.
   É um efeito real, mas moderado.
 
 **Decisão sobre `Subsidy_Available`.** Não a classificamos como vazamento, porque **não é derivada do
-alvo**: (conferir seção de vazamento de dados). É uma condição que existe antes da decisão de compra
+alvo**: a descrição do dataset original a trata como um 
+fator econômico do comprador, não resultado da compra (Seção 7).
+É uma condição que existe antes da decisão de compra
 e tem leitura econômica direta. Mas a relação é tão forte que o modelo pode se apoiar quase só nela e
 mascarar as outras features. Por isso **vamos treinar com e sem `Subsidy_Available`** na entrega de
 Classificação e comparar as métricas. O `preprocess.py` já aceita as duas versões (`use_subsidy=True/False`).
@@ -201,7 +203,7 @@ Classificação e comparar as métricas. O `preprocess.py` já aceita as duas ve
   **4,18%** (Medium, 49.920 linhas) e **0,11%** (High, 1.773 linhas). A relação é monotônica e quase
   determinística nos níveis Medium e High: quem tem ansiedade de autonomia acima de Low praticamente nunca
   compra.
-- **Decisão: descartamos `Range_Anxiety_Level`.** (verificar seção de vazamento de dados). Uma feature construída a partir do que
+- **Decisão: descartamos `Range_Anxiety_Level`.** (a descrição do dataset original a trata como um segundo alvo, seção 7). Uma feature construída a partir do que
   queremos prever carrega o rótulo para dentro do modelo e inflaria as métricas sem generalizar. Ela fica
   visível nesta figura só como evidência da decisão; fora desta seção, não entra em nenhum modelo nem nas projeções
   PCA, t-SNE e UMAP.
