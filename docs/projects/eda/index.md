@@ -370,7 +370,7 @@ derivada dele. Será treinada com e sem a coluna na entrega de Classificação (
 |-------|--------------|-----------|-----------|
 | Estatísticas calculadas antes do split | Qualquer estatística (média, desvio, quantis) usada pra normalizar/imputar | — | Ajustar (`fit`) transformadores só no treino (Seção 8) |
 | `Subsidy_Available` — forte preditor, talvez suspeita de vazamento | Taxa de `Will_Buy_EV`: 27,5% (`Yes`) vs 0,5% (`No`) — quase separação total | A descrição do dataset original no Kaggle lista "disponibilidade de subsídio" como fator econômico do comprador (junto com preocupação ambiental), não como resultado da compra — reduz a suspeita de vazamento literal, pode ser apenas uma feature de forte impacto | Manter como feature, mas documentar a ressalva; monitorar se o modelo de classificação depende dela de forma desproporcional |
-| `Range_Anxiety_Level` — suspeita de vazamento | Taxa de `Will_Buy_EV`: 18,8% (`Low`) vs 4% (`Medium`) vs 0,1% (`High`) — quase separação total (Seção 5) | A descrição do dataset original trata `Range_Anxiety_Level` como um **segundo alvo calculado**, derivado do mesmo processo que gera `Will_Buy_EV, não sendo uma feature de entrada independente | Iremos testar o modelo de classificação com e sem essa feature. Se a performance cair demais sem ela, é sinal de que o "aprendizado" vinha do vazamento, não dos dados |
+| `Range_Anxiety_Level`: derivada do alvo | Taxa de `Yes`: 18,90% (Low), 4,18% (Medium) e 0,11% (High) (Fig. 8), quase determinística | A descrição do dataset original trata essa variável como um segundo alvo, calculado pelo mesmo processo que gera `Will_Buy_EV`, e não como feature de entrada independente. O padrão quase determinístico é consistente com isso, mas não é uma prova, porque não temos o gerador | **Descartada:** não entra no pipeline nem nas projeções PCA, t-SNE e UMAP (Seções 5.B, 6.5 e 8) |
 
 ## 8.1 Plano de pré-processamento
 
@@ -464,15 +464,16 @@ As colunas `missingindicator_*` são os indicadores "estava no piso" (1 se a lin
 
 | # | Métrica | Valor |
 |---|---------|-------|
-| 1 | Amostras | |
-| 2 | Features (antes / depois do encoding) | |
-| 3 | Features com ausentes | |
-| 4 | Maior % de ausência em uma feature | |
-| 5 | Linhas duplicadas | |
-| 6 | Razão de desbalanceamento do alvo | |
-| 7 | Acurácia (ou erro) do baseline trivial | |
-| 8 | Maior correlação feature–alvo | |
-| 9 | Amostras treino / teste após o split | |
+| 1 | Dataset, tarefa e alvo | Playground Series S6E9 (Kaggle) · classificação binária · `Will_Buy_EV` |
+| 2 | Instâncias × features (numéricas / categóricas) | 534.932 (treino) × 13 (7 numéricas / 6 categóricas) |
+| 3 | Coluna com mais faltantes e seu percentual | Nenhuma: 0 ausentes em todas as colunas (0,00%) |
+| 4 | Colunas descartadas e o motivo | `id` (identificador) · `Range_Anxiety_Level` (derivada do alvo, vazamento) |
+| 5 | Classe minoritária (%) | `Yes` = 17,46% |
+| 6 | Tamanho do treino e do teste | 534.932 / 133.733 |
+| 7 | Par de numéricas mais correlacionado e o valor | `Charging_Stations_Near_Home` × `Charging_Stations_Near_Work`, ρ = +0,543 (Spearman) |
+| 8 | Linhas afetadas pela estratégia de outliers | 4.405 (0,82% do treino) |
+| 9 | Variância explicada por PC1 + PC2 | 25,90% |
+| 10 | `shape` do treino e do teste após o pipeline | (534.932; 21) e (133.733; 21) |
 
 ## Conclusão
 
