@@ -118,8 +118,7 @@ histograma individual. As demais, por terem poucos valores distintos, já estão
     As concentrações exatas no valor mínimo em `Annual_Income_USD` e `Daily_Commute_km`
     não aparecem como `NaN`, mas o padrão (pico isolado, exatamente no piso da
     escala, destoa do resto da distribuição) sugere que esses valores representam
-    respostas ausentes definidas como o mínimo da escala, em vez de dados reais. O
-    tratamento desse achado será definido posteriormente.
+    respostas ausentes definidas como o mínimo da escala, em vez de dados reais. A hipótese é testada na Seção 6.3 e o tratamento está na Seção 8.
 
 ## 5. Análise bivariada e correlações
 
@@ -297,8 +296,7 @@ Isso não significa que os dados estejam completos: os pisos de renda e deslocam
 | Categóricas com grafias duplicadas (após `strip` e `lower`) ou placeholders (`Unknown`, `N/A`, `?`) | nenhuma |
 | Categorias no teste ausentes do treino | nenhuma, nas 6 categóricas |
 
-Os limites de "valor impossível" são nossos: [citar a fonte, se a página do Kaggle descrever as faixas válidas; se não,
-dizer que são limites de bom senso]. O fato de nenhuma categoria nova aparecer no teste não elimina `handle_unknown="ignore"`
+Os limites de "valor impossível" são critérios nossos, de bom senso, e não faixas oficiais do dataset. O fato de nenhuma categoria nova aparecer no teste não elimina `handle_unknown="ignore"`
 no encoding: mantemos para o caso de o modelo receber dados novos, como o `test.csv` da competição.
 
 ### 6.3 Valores no piso
@@ -319,18 +317,13 @@ cerca de 10.600. Em pelo menos um piso estão 153.679 linhas (28,73%).
 
 - **Renda.** A taxa de `Yes` no piso (4,41%) é quatro vezes menor que fora dele (18,79%). Uma não-resposta aleatória
   teria taxa perto da geral (17,46%). O grupo do piso se comporta como pessoas de renda baixa, o que é coerente com a
-  correlação de +0,224 entre renda e alvo (Seção 5.A) e com valores truncados no mínimo. Portanto **esse grupo é informativo, e
-  apagar seu valor com a mediana destruiria sinal.**
+  correlação de +0,224 entre renda e alvo (Seção 5.A) e com valores truncados no mínimo. Portanto **esse grupo é informativo**, e o tratamento precisa preservar a informação de estar no piso (indicador, abaixo).
 - **Deslocamento.** A taxa no piso (18,43%) é próxima da de fora (17,20%), e o deslocamento quase não se relaciona com o
   alvo (ρ = −0,044). Não há evidência de que o piso seja diferente das demais linhas.
 - **Independência dos pisos.** O número de linhas nos dois pisos (11.018) é quase o esperado sob independência (cerca de
   10.600). Isso é contra a ideia de um respondente que pulou vários campos de uma vez.
 
-**Conclusão e revisão do achado da Seção 4.** A hipótese de "não-resposta disfarçada" **não se sustenta para a renda**
-e não tem apoio para o deslocamento. O mais provável é que os valores tenham sido truncados no mínimo da escala. Isso é
-uma interpretação, não uma prova: não temos o gerador do dataset. Tratamento proposto (Seção 8, estratégia de faltantes e
-outliers): **manter os valores originais no piso e acrescentar um indicador binário "no piso" para cada uma das duas
-colunas**, sem imputação por mediana.
+**Conclusão e revisão do achado da Seção 4.** A hipótese de "não-resposta aleatória" **não se sustenta**: na renda, a taxa de `Yes` no piso (4,41%) é muito diferente da de fora dele (18,79%), e no deslocamento a diferença é pequena (18,43% contra 17,20%). O mais provável é que os valores tenham sido truncados no mínimo da escala, mas isso é uma interpretação, não uma prova: não temos o gerador do dataset. Como não sabemos se o piso é um valor real ou um código de ausência, adotamos um tratamento que funciona nas duas leituras (Seção 8): **o piso vira `NaN`, é imputado pela mediana do treino e ganha um indicador binário "estava no piso"** para cada uma das duas colunas. O indicador preserva a informação de estar no piso, que é o sinal que o grupo carrega, e a imputação só retira da escala numérica o valor constante (30.000 ou 5,0 km), que distorceria o escalonamento.
 
 ### 6.4 Outliers
 
@@ -347,20 +340,24 @@ Método: **IQR com k = 1,5** (limites Q1 − 1,5·IQR e Q3 + 1,5·IQR), calculad
 | `Environmental_Concern_Level` | [−1,00; 7,00] | 0 | 0,00% |
 
 - **Renda e deslocamento:** são contínuas, e os outliers são caudas altas (renda máxima 188.549, deslocamento máximo
-  98,7 km), sem valores absurdos. **Winsorizamos** nos limites do IQR, em vez de remover linhas: são poucas (0,55% e 0,01%) e o
-  `StandardScaler`, que usaremos por causa da rede neural, é sensível a caudas. Remover linhas seria uma decisão de
-  modelagem, e não vemos erro de dado que a justifique.
+  98,7 km), sem valores absurdos. **Winsorizamos** nos limites do IQR, em vez de remover linhas: são poucas e o
+  `StandardScaler`, que usaremos por causa da rede neural, é sensível a caudas. Como as linhas no piso viram `NaN`
+  antes (Seção 6.3), os limites usados no pipeline são calculados **sem elas**, o que os estreita: renda
+  [24.950,00; 152.806,00] (4.250 linhas, 0,79% do treino) e deslocamento [−2,90; 81,90] (155 linhas, 0,03%).
+  Remover linhas seria uma decisão de modelagem, e não vemos erro de dado que a justifique.
 - **`Number_of_Cars_Owned`:** os 10.725 "outliers" são todos os que têm **4 carros**. A regra do IQR não se aplica a uma variável
   discreta com 4 valores e IQR de 1: o valor 4 é legítimo. **Não tratamos.**
 - **Idade, estações e preocupação ambiental:** nenhum outlier.
-- **Linhas afetadas pela estratégia** (item 8 da tabela final): [preencher com o `preprocess_output.txt`].
+- **Linhas afetadas pela estratégia de outliers:** **4.405 linhas (0,82% do treino)** têm algum valor winsorizado
+  (4.250 por renda e 155 por deslocamento, sem sobreposição). Além disso, 153.679 linhas (28,73%) têm pelo menos
+  um valor no piso, tratado como `NaN` e imputado (Seção 6.3).
 
 ### 6.5 Colunas descartadas
 
 | Coluna | Motivo | Evidência |
 |--------|--------|-----------|
 | `id` | Identificador, não é feature | 534.932 valores únicos em 534.932 linhas |
-| `Range_Anxiety_Level` | Derivada do alvo (vazamento) | [fonte]; `Yes` em 18,90% (Low), 4,18% (Medium) e 0,11% (High), Seção 5.B |
+| `Range_Anxiety_Level` | Derivada do alvo (vazamento) | Descrição do dataset original no Kaggle (Seção 7); `Yes` em 18,90% (Low), 4,18% (Medium) e 0,11% (High), Seção 5.B |
 | (nenhuma constante) | | 0 colunas constantes |
 
 `Subsidy_Available` **não** é descartada: tem relação muito forte com o alvo (0,57% contra 27,47% de `Yes`), mas não é
