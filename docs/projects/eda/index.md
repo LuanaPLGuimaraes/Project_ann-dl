@@ -3,7 +3,7 @@ project: eda
 task: classificação
 dataset: "Playground Series S6E9 — Predicting Electric Vehicle Purchases (Kaggle)"
 team: ["Luana Prado Lopes Guimaraes", "Laura Pontiroli Machado"]
-ai_use: "Uso assistido de IA para estruturar a análise, revisar código, discutir critérios metodológicos e redigir o relatório. Todos os números, decisões e interpretações foram definidos e escritos pela equipe."
+ai_use: "Uso assistido de IA para estruturar a análise, revisar código e discutir critérios metodológicos. Todos os números, decisões e interpretações foram definidos e escritos pela equipe."
 ---
 
 # 1. EDA — Análise Exploratória
@@ -372,13 +372,85 @@ derivada dele. Será treinada com e sem a coluna na entrega de Classificação (
 | `Subsidy_Available` — forte preditor, talvez suspeita de vazamento | Taxa de `Will_Buy_EV`: 27,5% (`Yes`) vs 0,5% (`No`) — quase separação total | A descrição do dataset original no Kaggle lista "disponibilidade de subsídio" como fator econômico do comprador (junto com preocupação ambiental), não como resultado da compra — reduz a suspeita de vazamento literal, pode ser apenas uma feature de forte impacto | Manter como feature, mas documentar a ressalva; monitorar se o modelo de classificação depende dela de forma desproporcional |
 | `Range_Anxiety_Level` — suspeita de vazamento | Taxa de `Will_Buy_EV`: 18,8% (`Low`) vs 4% (`Medium`) vs 0,1% (`High`) — quase separação total (Seção 5) | A descrição do dataset original trata `Range_Anxiety_Level` como um **segundo alvo calculado**, derivado do mesmo processo que gera `Will_Buy_EV, não sendo uma feature de entrada independente | Iremos testar o modelo de classificação com e sem essa feature. Se a performance cair demais sem ela, é sinal de que o "aprendizado" vinha do vazamento, não dos dados |
 
-## 8. Plano de pré-processamento
+## 8.1 Plano de pré-processamento
 
-A saída desta entrega. Uma linha por transformação, ligando cada uma a um achado acima.
+Cada transformação foi escolhida a partir de um achado das seções anteriores, e **todas as estatísticas (mediana, piso,
+limites do IQR, média, desvio e categorias) são aprendidas só no treino** e apenas aplicadas no teste. O destino é uma
+rede neural, que exige entradas numéricas, sem `NaN` e em escalas comparáveis.
 
 | # | Transformação | Features | Motivo (seção) |
 |---|---------------|----------|----------------|
-| 1 | | | |
+| 1 | Descartar a coluna | `id` | Identificador: 534.932 valores únicos em 534.932 linhas (Seção 6.5) |
+| 2 | Descartar a coluna | `Range_Anxiety_Level` | Risco de vazamento: derivada do alvo (Seções 5.B, 6.5 e 7) |
+| 3 | Valor no piso vira `NaN`, é imputado pela mediana do treino e ganha um indicador "estava no piso" | `Annual_Income_USD`, `Daily_Commute_km` | 9,20% e 21,59% das linhas no piso; na renda, esse grupo tem 4,41% de `Yes` contra 18,79% fora dele, então estar no piso é informativo (Seção 6.3) |
+| 4 | Winsorização pelo IQR (k = 1,5), com limites do treino calculados sem as linhas do piso | `Annual_Income_USD`, `Daily_Commute_km` | Caudas altas e poucas linhas afetadas (4.405, 0,82%); remover linhas seria decisão de modelagem (Seção 6.4) |
+| 5 | Imputação pela mediana, por segurança | `Age`, `Number_of_Cars_Owned`, `Charging_Stations_Near_Home`, `Charging_Stations_Near_Work`, `Environmental_Concern_Level` | Sem ausentes no treino (Seção 6.1); evita erro se dados novos vierem com `NaN` |
+| 6 | Padronização (`StandardScaler`) | As 7 numéricas e os 2 indicadores de piso | As escalas são muito diferentes (renda de 30.000 a 188.549, `Environmental_Concern_Level` de 1 a 5, Seção 4) e a rede neural é sensível a isso |
+| 7 | One-hot (uma coluna só se for binária) com `handle_unknown="ignore"` | `Gender`, `City_Type`, `Current_Car_Type`, `Home_Charging_Possible`, `Subsidy_Available` | Categóricas nominais, sem ordem (Seção 2). Nenhuma categoria nova no teste (Seção 6.2), mas mantemos o `ignore` por segurança. Geram 12 colunas |
+
+### 8.2 PCA
+
+A PCA foi ajustada nas 21 colunas escalonadas do treino inteiro (534.932 linhas). O gráfico de dispersão usa uma amostra estratificada de 10.000 linhas do treino.
+
+![PCA: variância explicada e PC1 x PC2](figures/fig13-pca.svg)
+/// caption
+**Figura 13** — PCA das features escalonadas do treino: variância explicada (esquerda) e amostra de 10.000 linhas em PC1 × PC2, colorida por `Will_Buy_EV` (direita).
+///
+
+**Variância explicada.** PC1 e PC2 juntos explicam **25,90%** da variância (16,11% e 9,79%). São necessários **9 componentes para 80%**, **11 para 90%** e **13 para 95%**. De PC3 a PC8 cada componente explica quase o mesmo (cerca de 9%): a variância está espalhada em muitas direções, o que combina com as correlações baixas entre as features (Seção 5.A). PC19 a PC21 têm variância zero porque as colunas one-hot de cada categórica somam 1, ou seja, são redundantes.
+
+**Loadings.** PC1 é dominada por `Charging_Stations_Near_Home` (+0,638), `Charging_Stations_Near_Work` (+0,638) e `City_Type_Urban` (+0,308): é o eixo da infraestrutura de carregamento. PC2 é dominada por `Environmental_Concern_Level` (+0,645), `Annual_Income_USD` (+0,634) e pelo indicador de piso da renda (−0,377): é o eixo de preocupação ambiental e renda. PC3 combina `Daily_Commute_km` (+0,651) com os indicadores de piso da renda (−0,490) e do deslocamento (−0,347).
+
+**Conclusão (Fig. 13).** Na projeção PC1 × PC2, os compradores (`Yes`) se concentram na parte de cima, onde PC2 é alto, isto é, onde a preocupação ambiental e a renda são maiores. Isso é coerente com as correlações com o alvo da Seção 5.A (ρ = +0,461 e +0,224). Mas os dois grupos se sobrepõem bastante, e ao longo de PC1 não há separação visível. Como duas componentes guardam só 25,90% da variância, essa projeção mostra apenas parte da estrutura dos dados.
+
+### 8.3 t-SNE e UMAP
+
+As duas projeções usam a mesma amostra estratificada de 10.000 linhas do treino (17,46% de `Yes`, como no treino inteiro), com `random_state=42`. Usamos 2 valores de `perplexity` no t-SNE (30 e 50; divergência KL final de 2,1506 e 2,1063) e 2 valores de `n_neighbors` no UMAP (15 e 50, com `min_dist=0,1`). Nesses métodos, o tamanho dos grupos e a distância entre eles não têm leitura direta, e a classe `Yes` é desenhada por cima da `No`, então pode esconder pontos azuis.
+
+![t-SNE com perplexity 30 e 50](figures/fig14-tsne.svg)
+/// caption
+**Figura 14** — t-SNE de uma amostra de 10.000 linhas do treino, com `perplexity` 30 (esquerda) e 50 (direita), colorida por `Will_Buy_EV`.
+///
+
+**Conclusão (Fig. 14).** Os dois valores de `perplexity` mostram a mesma estrutura: vários grupos separados, com posições e formas parecidas, então o resultado é estável ao parâmetro. Dentro de cada grupo, `Yes` e `No` aparecem misturados, mas a proporção de `Yes` varia de um grupo para outro: os grupos pequenos da parte de baixo têm quase só `No`.
+
+![UMAP com n_neighbors 15 e 50](figures/fig15-umap.svg)
+/// caption
+**Figura 15** — UMAP de uma amostra de 10.000 linhas do treino, com `n_neighbors` 15 (esquerda) e 50 (direita), colorida por `Will_Buy_EV`.
+///
+
+**Conclusão (Fig. 15).** O UMAP também forma ilhas separadas. Com `n_neighbors=15` elas aparecem mais espalhadas e com `n_neighbors=50` ficam mais juntas e compactas, o que mostra que o arranjo dos grupos depende do parâmetro. Em todas as ilhas `Yes` e `No` convivem.
+
+**O que as projeções não lineares revelam que a PCA não mostra.** A PCA mostra uma única nuvem contínua; o t-SNE e o UMAP revelam que os dados formam **grupos separados**, que provavelmente correspondem a combinações das variáveis categóricas (por exemplo, subsídio, carregador em casa e tipo de cidade). Essa explicação é uma hipótese, que não testamos aqui. Mas nas três projeções os compradores não formam um grupo próprio: o `Yes` está espalhado dentro dos grupos, com proporção maior em algumas regiões. Concluímos que, nessas projeções de 2 dimensões, as classes se sobrepõem bastante e a tarefa não será de separação fácil. Um modelo não linear pode aproveitar as diferenças de proporção entre regiões, mas não se deve esperar uma separação limpa, e o desbalanceamento (17,46% de `Yes`) reforça que a acurácia sozinha não basta.
+
+### 8.4 Pipeline
+
+O pré-processamento está em `code/preprocess.py`, um arquivo importável. Ele monta um `ColumnTransformer` com três ramos, e cada ramo é um `Pipeline` do scikit-learn: (1) renda e deslocamento (piso, winsorização, imputação com indicador e padronização), (2) as outras cinco numéricas (imputação e padronização) e (3) as cinco categóricas (one-hot). O ajuste (`fit`) é feito só no treino, e o teste só é transformado:
+
+```python
+from eda import load_split
+from preprocess import build_preprocessor, prepare_xy
+
+train_df, test_df = load_split()
+X_train, y_train = prepare_xy(train_df)
+X_test, y_test = prepare_xy(test_df)
+
+pre = build_preprocessor()
+X_train_t = pre.fit_transform(X_train)   # fit só no treino
+X_test_t = pre.transform(X_test)         # teste apenas transformado
+```
+
+O parâmetro `use_subsidy=False` gera a versão sem `Subsidy_Available`, que será usada na comparação da entrega de Classificação (Seção 5.B).
+
+**Resultado.**
+
+- **Features:** entram 12 (as 13 originais menos `Range_Anxiety_Level`; `id` e o alvo já são separados) e saem **21 colunas**: 7 numéricas, 2 indicadores de piso e 12 colunas de categorias.
+- **Shape:** treino **(534.932; 21)** e teste **(133.733; 21)**.
+- **`NaN`:** **0** no treino e **0** no teste.
+- **Nomes das 21 features:** `Annual_Income_USD`, `Daily_Commute_km`, `missingindicator_Annual_Income_USD`, `missingindicator_Daily_Commute_km`, `Age`, `Number_of_Cars_Owned`, `Charging_Stations_Near_Home`, `Charging_Stations_Near_Work`, `Environmental_Concern_Level`, `Gender_Female`, `Gender_Male`, `Gender_Other`, `City_Type_Rural`, `City_Type_Suburban`, `City_Type_Urban`, `Current_Car_Type_Hatchback`, `Current_Car_Type_SUV`, `Current_Car_Type_Sedan`, `Current_Car_Type_Truck`, `Home_Charging_Possible_Yes`, `Subsidy_Available_Yes`.
+
+As colunas `missingindicator_*` são os indicadores "estava no piso" (1 se a linha estava no piso, 0 se não).
+
 
 ## 9. Estratégia de split
 
