@@ -194,9 +194,6 @@ if __name__ == "__main__":
     figures = []
     figures += plot_target_distribution(train_df)
     figures += plot_univariate_histograms(train_df, start=2)
-    figures += plot_numeric_by_target(train_df, start=5)
-    figures += plot_categorical_vs_target(train_df, start=8)
-    figures += plot_correlation(train_df, "fig14-correlacao.svg")
 
     report.section("Figuras salvas")
     for path in figures:
