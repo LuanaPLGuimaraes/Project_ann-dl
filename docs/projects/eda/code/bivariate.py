@@ -32,7 +32,7 @@ BOXPLOTS = [
     ("Annual_Income_USD", TARGET),   # Range_Anxiety_Level foi descartada; renda x alvo é mais informativa
 ]
 
-FIG_START = 8  # 3A: 8-9 | 3B: 10-12 | 3C: 13-15 (ajuste conforme a numeração do relatório)
+FIG_START = 5  # 3A: 5-6 | 3B: 7-9 | 3C: 10-12
 BIVARIATE_OUTPUT = OUTPUT_PATH.parent / "bivariate_output.txt"
 
 

@@ -2,72 +2,70 @@
 Amostra estratificada do treino: 10000 de 534932 linhas (classe Yes na amostra: 17.46%), random_state=42
 
 === PCA ===
-Variância explicada por PC1 + PC2: 25.00%
+Variância explicada por PC1 + PC2: 25.90%
 Componentes para 80% da variância: 9
-Componentes para 90% da variância: 12
-Componentes para 95% da variância: 14
+Componentes para 90% da variância: 11
+Componentes para 95% da variância: 13
 
       var_explicada  acumulada
-PC1          0.1487     0.1487
-PC2          0.1013     0.2500
-PC3          0.0886     0.3386
-PC4          0.0822     0.4208
-PC5          0.0818     0.5026
-PC6          0.0815     0.5841
-PC7          0.0801     0.6641
-PC8          0.0756     0.7397
-PC9          0.0677     0.8074
-PC10         0.0401     0.8475
-PC11         0.0399     0.8874
-PC12         0.0333     0.9207
-PC13         0.0254     0.9461
-PC14         0.0188     0.9650
-PC15         0.0132     0.9782
-PC16         0.0090     0.9872
-PC17         0.0060     0.9932
-PC18         0.0058     0.9990
-PC19         0.0010     1.0000
+PC1          0.1611     0.1611
+PC2          0.0979     0.2590
+PC3          0.0905     0.3494
+PC4          0.0892     0.4386
+PC5          0.0890     0.5276
+PC6          0.0887     0.6163
+PC7          0.0863     0.7026
+PC8          0.0823     0.7848
+PC9          0.0437     0.8285
+PC10         0.0436     0.8722
+PC11         0.0363     0.9084
+PC12         0.0285     0.9369
+PC13         0.0205     0.9574
+PC14         0.0145     0.9719
+PC15         0.0141     0.9860
+PC16         0.0066     0.9926
+PC17         0.0063     0.9989
+PC18         0.0011     1.0000
+PC19         0.0000     1.0000
 PC20         0.0000     1.0000
 PC21         0.0000     1.0000
-PC22         0.0000     1.0000
 
 Loadings (3 primeiros componentes):
                                       PC1    PC2    PC3
-Annual_Income_USD                  -0.035 -0.172  0.617
-Daily_Commute_km                    0.083  0.522  0.193
-missingindicator_Annual_Income_USD -0.007  0.126 -0.400
-missingindicator_Daily_Commute_km  -0.063 -0.271 -0.288
-Age                                -0.010 -0.005 -0.091
-Number_of_Cars_Owned                0.018  0.000 -0.005
-Charging_Stations_Near_Home         0.631 -0.106 -0.011
-Charging_Stations_Near_Work         0.626 -0.171 -0.019
-Environmental_Concern_Level        -0.038 -0.268  0.546
-Range_Anxiety_Level                 0.118  0.694  0.170
-Gender_Female                      -0.006 -0.010 -0.001
-Gender_Male                         0.006  0.010  0.001
+Annual_Income_USD                  -0.031  0.634 -0.008
+Daily_Commute_km                    0.059 -0.162  0.651
+missingindicator_Annual_Income_USD -0.012 -0.377 -0.490
+missingindicator_Daily_Commute_km  -0.049 -0.071 -0.347
+Age                                -0.010 -0.060 -0.329
+Number_of_Cars_Owned                0.019 -0.009  0.266
+Charging_Stations_Near_Home         0.638  0.022 -0.042
+Charging_Stations_Near_Work         0.638  0.041 -0.059
+Environmental_Concern_Level        -0.030  0.645 -0.174
+Gender_Female                      -0.006  0.005 -0.004
+Gender_Male                         0.006 -0.005  0.004
 Gender_Other                        0.000  0.000  0.000
-City_Type_Rural                    -0.163  0.013 -0.006
-City_Type_Suburban                 -0.146  0.003  0.008
-City_Type_Urban                     0.309 -0.016 -0.002
-Current_Car_Type_Hatchback         -0.002 -0.001  0.003
-Current_Car_Type_SUV               -0.000  0.002  0.009
-Current_Car_Type_Sedan              0.001 -0.003 -0.009
-Current_Car_Type_Truck              0.001  0.002 -0.003
-Home_Charging_Possible_Yes         -0.197 -0.115 -0.022
-Subsidy_Available_Yes              -0.010 -0.026  0.043
-Maiores |loadings| em PC1: Charging_Stations_Near_Home (+0.631), Charging_Stations_Near_Work (+0.626), City_Type_Urban (+0.309)
-Maiores |loadings| em PC2: Range_Anxiety_Level (+0.694), Daily_Commute_km (+0.522), missingindicator_Daily_Commute_km (-0.271)
-Maiores |loadings| em PC3: Annual_Income_USD (+0.617), Environmental_Concern_Level (+0.546), missingindicator_Annual_Income_USD (-0.400)
+City_Type_Rural                    -0.163 -0.009  0.003
+City_Type_Suburban                 -0.146  0.003  0.021
+City_Type_Urban                     0.308  0.006 -0.024
+Current_Car_Type_Hatchback         -0.002  0.003  0.003
+Current_Car_Type_SUV               -0.000  0.004  0.021
+Current_Car_Type_Sedan              0.001 -0.004 -0.022
+Current_Car_Type_Truck              0.001 -0.003 -0.002
+Home_Charging_Possible_Yes         -0.184  0.012 -0.001
+Subsidy_Available_Yes              -0.009  0.053 -0.015
+Maiores |loadings| em PC1: Charging_Stations_Near_Home (+0.638), Charging_Stations_Near_Work (+0.638), City_Type_Urban (+0.308)
+Maiores |loadings| em PC2: Environmental_Concern_Level (+0.645), Annual_Income_USD (+0.634), missingindicator_Annual_Income_USD (-0.377)
+Maiores |loadings| em PC3: Daily_Commute_km (+0.651), missingindicator_Annual_Income_USD (-0.490), missingindicator_Daily_Commute_km (-0.347)
 
 === t-SNE ===
-perplexity=30: KL divergence final = 2.0476
-perplexity=50: KL divergence final = 1.9993
+perplexity=30: KL divergence final = 2.1506
+perplexity=50: KL divergence final = 2.1063
 
 === UMAP ===
 n_neighbors=15, min_dist=0.1: ok
 n_neighbors=50, min_dist=0.1: ok
 
 === Figuras salvas ===
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig16-pca.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig17-tsne.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig18-umap.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig13-pca.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig14-tsne.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig15-umap.svg
