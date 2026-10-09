@@ -3,7 +3,7 @@ project: eda
 task: classificação
 dataset: "Playground Series S6E9 — Predicting Electric Vehicle Purchases (Kaggle)"
 team: ["Luana Prado Lopes Guimaraes", "Laura Pontiroli Machado"]
-ai_use: "Uso assistido de IA para estruturar a análise, revisar código e discutir critérios metodológicos. Todos os números, decisões e interpretações foram definidos e escritos pela equipe."
+ai_use: "Uso assistido de IA para estruturar a análise, revisar código, discutir critérios metodológicos e auxiliar organização do gitpages. Todos os números, decisões e interpretações foram definidos e escritos pela equipe."
 ---
 
 # 1. EDA — Análise Exploratória
@@ -372,11 +372,13 @@ derivada dele. Será treinada com e sem a coluna na entrega de Classificação (
 | `Subsidy_Available` — forte preditor, talvez suspeita de vazamento | Taxa de `Will_Buy_EV`: 27,5% (`Yes`) vs 0,5% (`No`) — quase separação total | A descrição do dataset original no Kaggle lista "disponibilidade de subsídio" como fator econômico do comprador (junto com preocupação ambiental), não como resultado da compra — reduz a suspeita de vazamento literal, pode ser apenas uma feature de forte impacto | Manter como feature, mas documentar a ressalva; monitorar se o modelo de classificação depende dela de forma desproporcional |
 | `Range_Anxiety_Level`: derivada do alvo | Taxa de `Yes`: 18,90% (Low), 4,18% (Medium) e 0,11% (High) (Fig. 8), quase determinística | A descrição do dataset original trata essa variável como um segundo alvo, calculado pelo mesmo processo que gera `Will_Buy_EV`, e não como feature de entrada independente. O padrão quase determinístico é consistente com isso, mas não é uma prova, porque não temos o gerador | **Descartada:** não entra no pipeline nem nas projeções PCA, t-SNE e UMAP (Seções 5.B, 6.5 e 8) |
 
-## 8.1 Plano de pré-processamento
+## 8 Plano de pré-processamento
 
 Cada transformação foi escolhida a partir de um achado das seções anteriores, e **todas as estatísticas (mediana, piso,
 limites do IQR, média, desvio e categorias) são aprendidas só no treino** e apenas aplicadas no teste. O destino é uma
 rede neural, que exige entradas numéricas, sem `NaN` e em escalas comparáveis.
+
+### 8.1 Tabela de estratégias
 
 | # | Transformação | Features | Motivo (seção) |
 |---|---------------|----------|----------------|
