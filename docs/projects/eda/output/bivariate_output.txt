@@ -1,0 +1,111 @@
+=== 3A. Correlação numérica x numérica ===
+Pearson:
+                               Age  Annual_Income_USD  Daily_Commute_km  Number_of_Cars_Owned  Charging_Stations_Near_Home  Charging_Stations_Near_Work  Environmental_Concern_Level
+Age                          1.000             -0.005            -0.005                -0.002                       -0.003                       -0.005                       -0.003
+Annual_Income_USD           -0.005              1.000             0.008                -0.001                       -0.010                       -0.003                        0.076
+Daily_Commute_km            -0.005              0.008             1.000                 0.002                        0.045                        0.034                       -0.019
+Number_of_Cars_Owned        -0.002             -0.001             0.002                 1.000                        0.008                        0.008                       -0.000
+Charging_Stations_Near_Home -0.003             -0.010             0.045                 0.008                        1.000                        0.510                       -0.011
+Charging_Stations_Near_Work -0.005             -0.003             0.034                 0.008                        0.510                        1.000                       -0.008
+Environmental_Concern_Level -0.003              0.076            -0.019                -0.000                       -0.011                       -0.008                        1.000
+
+Spearman:
+                               Age  Annual_Income_USD  Daily_Commute_km  Number_of_Cars_Owned  Charging_Stations_Near_Home  Charging_Stations_Near_Work  Environmental_Concern_Level
+Age                          1.000             -0.005            -0.005                -0.002                       -0.003                       -0.006                       -0.003
+Annual_Income_USD           -0.005              1.000             0.004                -0.002                       -0.010                       -0.005                        0.075
+Daily_Commute_km            -0.005              0.004             1.000                 0.002                        0.043                        0.037                       -0.019
+Number_of_Cars_Owned        -0.002             -0.002             0.002                 1.000                        0.009                        0.009                        0.001
+Charging_Stations_Near_Home -0.003             -0.010             0.043                 0.009                        1.000                        0.543                       -0.012
+Charging_Stations_Near_Work -0.006             -0.005             0.037                 0.009                        0.543                        1.000                       -0.008
+Environmental_Concern_Level -0.003              0.075            -0.019                 0.001                       -0.012                       -0.008                        1.000
+
+Pares mais correlacionados (spearman):
+  Charging_Stations_Near_Home x Charging_Stations_Near_Work: +0.543
+  Annual_Income_USD x Environmental_Concern_Level: +0.075
+  Daily_Commute_km x Charging_Stations_Near_Home: +0.043
+  Daily_Commute_km x Charging_Stations_Near_Work: +0.037
+  Daily_Commute_km x Environmental_Concern_Level: -0.019
+Pares com |r| >= 0.7 (redundantes): 0
+
+Correlação de cada numérica com o alvo (spearman):
+Age                           -0.008
+Annual_Income_USD              0.224
+Daily_Commute_km              -0.044
+Number_of_Cars_Owned           0.006
+Charging_Stations_Near_Home   -0.022
+Charging_Stations_Near_Work   -0.014
+Environmental_Concern_Level    0.461
+
+=== 3B. Categóricas x alvo (proporção de Yes por categoria) ===
+Taxa geral de Yes no treino: 17.46%
+
+Subsidy_Available:
+                   taxa_yes       n
+Subsidy_Available                  
+No                   0.0057  198952
+Yes                  0.2747  335980
+
+Home_Charging_Possible:
+                        taxa_yes       n
+Home_Charging_Possible                  
+No                        0.1269  164764
+Yes                       0.1959  370168
+
+Range_Anxiety_Level:
+                     taxa_yes       n
+Range_Anxiety_Level                  
+High                   0.0011    1773
+Medium                 0.0418   49920
+Low                    0.1890  483239
+
+City_Type:
+           taxa_yes       n
+City_Type                  
+Urban        0.1607  231471
+Suburban     0.1813  204333
+Rural        0.1934   99128
+
+Current_Car_Type:
+                  taxa_yes       n
+Current_Car_Type                  
+Truck               0.1575   31470
+Sedan               0.1719  242646
+Hatchback           0.1734   63567
+SUV                 0.1812  197249
+
+Gender:
+        taxa_yes       n
+Gender                  
+Male      0.1725  294235
+Female    0.1772  236447
+Other     0.1776    4250
+
+=== 3C. Numérica x categórica (boxplots agrupados) ===
+
+Annual_Income_USD por City_Type:
+               n  mediana      IQR    desvio
+Rural      99128  84768.0  38422.0  29788.19
+Suburban  204333  85475.0  34738.0  28399.18
+Urban     231471  84748.0  34091.0  28305.98
+
+Daily_Commute_km por Current_Car_Type:
+                n  mediana    IQR  desvio
+Hatchback   63567     33.4  29.40   18.56
+SUV        197249     34.2  30.20   18.82
+Sedan      242646     33.0  30.10   18.63
+Truck       31470     33.3  32.57   19.20
+
+Annual_Income_USD por Will_Buy_EV:
+        n  mediana      IQR    desvio
+0  441509  82823.0  33258.0  28216.95
+1   93423  95966.0  34987.0  26273.48
+
+=== Figuras salvas ===
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig08-correlacao.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig09-scatter-pares.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig10-cat-vs-alvo-1.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig11-cat-vs-alvo-2.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig12-cat-vs-alvo-3.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig13-box-annual-income-usd.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig14-box-daily-commute-km.svg
+/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig15-box-annual-income-usd.svg

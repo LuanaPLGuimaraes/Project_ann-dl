@@ -1,0 +1,49 @@
+=== Pipeline de pré-processamento (use_subsidy=True) ===
+Valores no piso (viram NaN e são imputados pela mediana do treino):
+  Annual_Income_USD: piso=30000.0 -> 49191 linhas (9.20%)
+  Daily_Commute_km: piso=5.0 -> 115506 linhas (21.59%)
+
+Limites IQR (k=1.5) aprendidos no treino, já sem os pisos:
+  Annual_Income_USD: [24950.00, 152806.00]
+  Daily_Commute_km: [-2.90, 81.90]
+Linhas com algum outlier winsorizado: 4405 (0.82%)
+
+Colunas fora do modelo: id (identificador), Range_Anxiety_Level (derivada do alvo)
+Subsidy_Available no modelo: True
+
+Faixa das numéricas ANTES do escalonamento (justifica o StandardScaler):
+                                 min       max
+Annual_Income_USD            30000.0  188549.0
+Daily_Commute_km                 5.0      98.7
+Age                             25.0      69.0
+Number_of_Cars_Owned             1.0       4.0
+Charging_Stations_Near_Home      0.0      14.0
+Charging_Stations_Near_Work      0.0      19.0
+Environmental_Concern_Level      1.0       5.0
+
+Shape treino após pipeline: (534932, 21)
+Shape teste após pipeline:  (133733, 21)
+NaN no treino: 0 | NaN no teste: 0
+
+Nomes das 21 features:
+  01. Annual_Income_USD
+  02. Daily_Commute_km
+  03. missingindicator_Annual_Income_USD
+  04. missingindicator_Daily_Commute_km
+  05. Age
+  06. Number_of_Cars_Owned
+  07. Charging_Stations_Near_Home
+  08. Charging_Stations_Near_Work
+  09. Environmental_Concern_Level
+  10. Gender_Female
+  11. Gender_Male
+  12. Gender_Other
+  13. City_Type_Rural
+  14. City_Type_Suburban
+  15. City_Type_Urban
+  16. Current_Car_Type_Hatchback
+  17. Current_Car_Type_SUV
+  18. Current_Car_Type_Sedan
+  19. Current_Car_Type_Truck
+  20. Home_Charging_Possible_Yes
+  21. Subsidy_Available_Yes
