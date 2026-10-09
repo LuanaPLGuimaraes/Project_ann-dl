@@ -1,0 +1,91 @@
+=== Valores ausentes (treino) ===
+                             ausentes    %
+id                                  0  0.0
+Age                                 0  0.0
+Annual_Income_USD                   0  0.0
+Daily_Commute_km                    0  0.0
+Number_of_Cars_Owned                0  0.0
+Charging_Stations_Near_Home         0  0.0
+Charging_Stations_Near_Work         0  0.0
+Environmental_Concern_Level         0  0.0
+Gender                              0  0.0
+City_Type                           0  0.0
+Current_Car_Type                    0  0.0
+Home_Charging_Possible              0  0.0
+Subsidy_Available                   0  0.0
+Range_Anxiety_Level                 0  0.0
+Will_Buy_EV                         0  0.0
+
+Nenhuma coluna tem valores ausentes (0 faltantes em todas).
+
+=== Duplicatas ===
+Linhas duplicadas (todas as colunas, incluindo id): 0 (0.00%)
+Linhas duplicadas ignorando o id (features + alvo): 0 (0.00%)
+
+=== Identificador e colunas constantes ===
+id: 534932 valores únicos em 534932 linhas (identificador, todos distintos)
+Colunas constantes: nenhuma
+
+=== Valores impossíveis ===
+Age: 0 linhas com idade < 18 ou > 110 (0.00%)
+Annual_Income_USD: 0 linhas com renda <= 0 (0.00%)
+Daily_Commute_km: 0 linhas com deslocamento < 0 ou > 500 km (0.00%)
+Number_of_Cars_Owned: 0 linhas com carros < 0 (0.00%)
+Charging_Stations_Near_Home: 0 linhas com estações < 0 (0.00%)
+Charging_Stations_Near_Work: 0 linhas com estações < 0 (0.00%)
+Environmental_Concern_Level: 0 linhas com nível fora de 1-5 (0.00%)
+
+Age: 0 valores não inteiros
+Number_of_Cars_Owned: 0 valores não inteiros
+Charging_Stations_Near_Home: 0 valores não inteiros
+Charging_Stations_Near_Work: 0 valores não inteiros
+Environmental_Concern_Level: 0 valores não inteiros
+
+=== Higiene das categóricas e categorias novas no teste ===
+Gender: 3 valores ['Female', 'Male', 'Other']
+   após strip+lower: 3 valores (sem grafias duplicadas)
+   placeholders (Unknown, N/A, ?...): nenhum
+   categorias no teste ausentes do treino: nenhuma
+City_Type: 3 valores ['Rural', 'Suburban', 'Urban']
+   após strip+lower: 3 valores (sem grafias duplicadas)
+   placeholders (Unknown, N/A, ?...): nenhum
+   categorias no teste ausentes do treino: nenhuma
+Current_Car_Type: 4 valores ['Hatchback', 'SUV', 'Sedan', 'Truck']
+   após strip+lower: 4 valores (sem grafias duplicadas)
+   placeholders (Unknown, N/A, ?...): nenhum
+   categorias no teste ausentes do treino: nenhuma
+Home_Charging_Possible: 2 valores ['No', 'Yes']
+   após strip+lower: 2 valores (sem grafias duplicadas)
+   placeholders (Unknown, N/A, ?...): nenhum
+   categorias no teste ausentes do treino: nenhuma
+Subsidy_Available: 2 valores ['No', 'Yes']
+   após strip+lower: 2 valores (sem grafias duplicadas)
+   placeholders (Unknown, N/A, ?...): nenhum
+   categorias no teste ausentes do treino: nenhuma
+Range_Anxiety_Level: 3 valores ['High', 'Low', 'Medium']
+   após strip+lower: 3 valores (sem grafias duplicadas)
+   placeholders (Unknown, N/A, ?...): nenhum
+   categorias no teste ausentes do treino: nenhuma
+
+=== Valores no piso x alvo ===
+Taxa geral de Yes no treino: 17.46%
+
+Annual_Income_USD (piso = 30000.0): 49191 linhas (9.20%)
+   taxa de Yes no piso: 4.41% | fora do piso: 18.79%
+
+Daily_Commute_km (piso = 5.0): 115506 linhas (21.59%)
+   taxa de Yes no piso: 18.43% | fora do piso: 17.20%
+
+Nos dois pisos ao mesmo tempo: 11018 linhas (2.06%)
+Em pelo menos um piso: 153679 linhas
+
+=== Outliers (IQR, k=1.5) ===
+Age: limites [3.00, 91.00] -> 0 outliers (0.00%)
+Annual_Income_USD: limites [14323.50, 155807.50] -> 2926 outliers (0.55%)
+   sem as linhas no piso: limites [24950.00, 152806.00] -> 4250 outliers (0.79% do treino)
+Daily_Commute_km: limites [-28.10, 92.70] -> 37 outliers (0.01%)
+   sem as linhas no piso: limites [-2.90, 81.90] -> 155 outliers (0.03% do treino)
+Number_of_Cars_Owned: limites [-0.50, 3.50] -> 10725 outliers (2.00%)
+Charging_Stations_Near_Home: limites [-5.50, 14.50] -> 0 outliers (0.00%)
+Charging_Stations_Near_Work: limites [-7.50, 20.50] -> 0 outliers (0.00%)
+Environmental_Concern_Level: limites [-1.00, 7.00] -> 0 outliers (0.00%)
