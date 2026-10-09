@@ -1,6 +1,9 @@
 ---
 project: eda
-ai_use: "none"
+task: classificação
+dataset: "Playground Series S6E9 — Predicting Electric Vehicle Purchases (Kaggle)"
+team: ["Luana Prado Lopes Guimaraes", "Laura Pontiroli Machado"]
+ai_use: "Uso assistido de IA para estruturar a análise, revisar código, discutir critérios metodológicos e redigir o relatório. Todos os números, decisões e interpretações foram definidos e escritos pela equipe."
 ---
 
 # 1. EDA — Análise Exploratória
@@ -151,21 +154,11 @@ modelagem, não faxina.
 
 ## 7. Riscos de vazamento
 
-Liste as fontes de vazamento identificadas e como cada uma será contida.
-
-``` mermaid
-flowchart LR
-    raw[Dados brutos] --> split{{split treino/teste}}
-    split -->|treino| fit["fit_transform<br/>(estatísticas saem só daqui)"]
-    split -->|teste| apply[transform]
-    fit --> model[Modelo]
-    apply --> model
-```
-
-| Risco | Onde aparece | Contenção |
-|-------|--------------|-----------|
-| Estatísticas calculadas antes do split | | Ajustar transformadores só no treino |
-| | | |
+| Risco | Onde aparece | Evidência | Contenção |
+|-------|--------------|-----------|-----------|
+| Estatísticas calculadas antes do split | Qualquer estatística (média, desvio, quantis) usada pra normalizar/imputar | — | Ajustar (`fit`) transformadores só no treino (Seção 8) |
+| `Subsidy_Available` — forte preditor, talvez suspeita de vazamento | Taxa de `Will_Buy_EV`: 27,5% (`Yes`) vs 0,5% (`No`) — quase separação total | A descrição do dataset original no Kaggle lista "disponibilidade de subsídio" como fator econômico do comprador (junto com preocupação ambiental), não como resultado da compra — reduz a suspeita de vazamento literal, pode ser apenas uma feature de forte impacto | Manter como feature, mas documentar a ressalva; monitorar se o modelo de classificação depende dela de forma desproporcional |
+| `Range_Anxiety_Level` — suspeita de vazamento | Taxa de `Will_Buy_EV`: 18,8% (`Low`) vs 4% (`Medium`) vs 0,1% (`High`) — quase separação total (Seção 5) | A descrição do dataset original trata `Range_Anxiety_Level` como um **segundo alvo calculado**, derivado do mesmo processo que gera `Will_Buy_EV, não sendo uma feature de entrada independente | Iremos testar o modelo de classificação com e sem essa feature. Se a performance cair demais sem ela, é sinal de que o "aprendizado" vinha do vazamento, não dos dados |
 
 ## 8. Plano de pré-processamento
 
@@ -177,8 +170,11 @@ A saída desta entrega. Uma linha por transformação, ligando cada uma a um ach
 
 ## 9. Estratégia de split
 
-Proporções, estratificação, e o que impede uma mesma entidade de cair nos dois lados
-(agrupamento por usuário, por data, por sessão).
+- **Proporção:** 80% treino / 20% teste — 534.932 amostras de treino, 133.733 de teste
+- **Estratificação:** por `Will_Buy_EV`, preservando a proporção de classes (82,54% `No` / 17,46% `Yes`) em ambos os conjuntos
+- **Semente fixa:** `random_state=42`, usada para garantir reprodutibilidade
+- **Agrupamento:** cada linha representa um comprador potencial distinto indicado por `id` que tem 534.932 valores únicos, batendo exatamente com o número de linhas do treino, então não há repetição da mesma entidade (sem coluna de usuário, sessão ou data que indicasse necessidade de agrupamento)
+- **Ordem das operações:** o split foi feito **antes** de qualquer estatística de pré-processamento (médias, desvios, quantis usados nas Seções 4, 6 e 8 vêm só do conjunto de treino), evitando vazamento entre treino e teste
 
 ## Results summary
 
