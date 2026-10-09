@@ -17,7 +17,7 @@ ai_use: "Uso assistido de IA para estruturar a análise, revisar código e discu
     | Nome completo | E-mail | GitHub |
     |---------------|--------|--------|
     | Luana Prado Lopes Guimaraes | luanaplg@al.insper.edu.br | LuanaPLGuimaraes |
-    | Laura Pontiroli Machado | laurapm@alinsper.edu.br | laupontiroli |
+    | Laura Pontiroli Machado | laurapm@al.insper.edu.br | laupontiroli |
 
     Dataset, decisões e status: [página do projeto](../index.md).
 
@@ -477,7 +477,17 @@ As colunas `missingindicator_*` são os indicadores "estava no piso" (1 se a lin
 
 ## Conclusão
 
-O que o dataset permite e o que ele impede. Se algum achado inviabiliza a tarefa pretendida,
-é aqui que a equipe muda de rumo — ainda dá tempo.
+O dataset **permite** a tarefa pretendida: prever `Will_Buy_EV` com um classificador. Há dados em quantidade (534.932 linhas de treino), eles estão limpos (sem valores ausentes, duplicatas ou valores impossíveis, Seção 6) e há sinal real nas features: `Environmental_Concern_Level` (ρ = +0,461) e `Annual_Income_USD` (ρ = +0,224) se associam à compra, e a taxa de `Yes` sobe de 12,69% para 19,59% quando há carregador em casa e de 0,57% para 27,47% quando há subsídio. O pré-processamento já está pronto e reproduzível em um pipeline que transforma 12 features em 21 colunas, sem `NaN` e ajustado só no treino (Seção 8).
+
+O dataset também **impõe limites** que mudam a forma de modelar. Primeiro, o alvo é desbalanceado (17,46% de `Yes`): um modelo que sempre responde `No` já acerta 82,54%, então a acurácia sozinha não serve e vamos acompanhar também precisão, recall e F1 (ou AUC). Segundo, o sinal está concentrado em poucas features: `Subsidy_Available` é tão forte que o modelo pode se apoiar quase só nela, por isso vamos comparar o desempenho com e sem ela, e as demais numéricas têm |ρ| ≤ 0,044 com o alvo. Terceiro, as projeções PCA, t-SNE e UMAP mostram classes que se sobrepõem bastante (os dois primeiros componentes da PCA explicam só 25,90% da variância), então não devemos esperar uma separação limpa e o desempenho tende a ser modesto. Quarto, `Range_Anxiety_Level` carrega praticamente a resposta e foi descartada para evitar vazamento. Por fim, o dataset é sintético: os padrões encontrados podem refletir o processo que o gerou e não o comportamento real de compradores, então as conclusões valem para este dado e não para o mercado de carros elétricos.
+
+Nenhum achado inviabiliza a classificação, e por isso mantemos o rumo. Nos próximos passos queremos treinar uma rede neural sobre o pipeline da Seção 8, comparar as versões com e sem `Subsidy_Available`, verificando sua influencia, e avaliar com métricas que levam o desbalanceamento em conta. Também queremos voltar à questão do piso de renda: se o indicador "estava no piso" ajudar o modelo, isso reforça que esse grupo carrega informação.
 
 ## Referências
+1. Kaggle. *Playground Series – Season 6, Episode 9: Predicting Electric Vehicle Purchases*. <https://www.kaggle.com/competitions/playground-series-s6e9>
+2. Kaggle. *EV Adoption Behavior and Range Anxiety*, dataset original em que a competição se baseia. <https://www.kaggle.com/datasets/itzzomkar/ev-adoption-behavior-and-range-anxiety>
+3. Insper. Enunciado do projeto de EDA, disciplina de Redes Neurais (ann-dl). <https://insper.github.io/ann-dl/pt/2026.2/projects/eda/>
+4. Pedregosa, F. et al. Scikit-learn: Machine Learning in Python. *Journal of Machine Learning Research*, 12, 2825–2830, 2011.
+5. van der Maaten, L.; Hinton, G. Visualizing Data using t-SNE. *Journal of Machine Learning Research*, 9, 2579–2605, 2008.
+6. McInnes, L.; Healy, J.; Melville, J. UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction. arXiv:1802.03426, 2018.
+7. Tukey, J. W. *Exploratory Data Analysis*. Addison-Wesley, 1977.
