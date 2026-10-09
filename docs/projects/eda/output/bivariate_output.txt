@@ -101,11 +101,11 @@ Annual_Income_USD por Will_Buy_EV:
 1   93423  95966.0  34987.0  26273.48
 
 === Figuras salvas ===
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig08-correlacao.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig09-scatter-pares.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig10-cat-vs-alvo-1.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig11-cat-vs-alvo-2.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig12-cat-vs-alvo-3.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig13-box-annual-income-usd.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig14-box-daily-commute-km.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig15-box-annual-income-usd.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig05-correlacao.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig06-scatter-pares.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig07-cat-vs-alvo-1.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig08-cat-vs-alvo-2.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig09-cat-vs-alvo-3.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig10-box-annual-income-usd.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig11-box-daily-commute-km.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig12-box-annual-income-usd.svg

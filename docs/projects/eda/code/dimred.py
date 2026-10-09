@@ -18,7 +18,7 @@ from preprocess import run as run_preprocess
 SAMPLE_SIZE = 10_000
 PERPLEXITIES = (30, 50)
 N_NEIGHBORS = (15, 50)
-FIG_START = 16  # número da primeira figura desta etapa (ajuste conforme o relatório)
+FIG_START = 13  # número da primeira figura desta etapa (ajuste conforme o relatório)
 
 CLASS_STYLE = {0: ("No", "#2a78d6"), 1: ("Yes", "#eb6834")}
 DIMRED_OUTPUT = OUTPUT_PATH.parent / "dimred_output.txt"

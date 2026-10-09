@@ -21,6 +21,8 @@ Charging_Stations_Near_Home      0.0      14.0
 Charging_Stations_Near_Work      0.0      19.0
 Environmental_Concern_Level      1.0       5.0
 
+Features antes do pipeline: 12 | depois: 21
+
 Shape treino após pipeline: (534932, 21)
 Shape teste após pipeline:  (133733, 21)
 NaN no treino: 0 | NaN no teste: 0

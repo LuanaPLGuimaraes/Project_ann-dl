@@ -36,7 +36,9 @@ LEAK_COLS = ["Range_Anxiety_Level"]
 SUBSIDY_COL = "Subsidy_Available"
 
 # Features com pico exato no valor mínimo (9,20% e 21,59% no treino).
-# Hipótese: não-resposta disfarçada -> o piso vira NaN, é imputado e ganha um indicador.
+# Tratamento: o piso vira NaN, é imputado pela mediana do treino e ganha um indicador
+# "estava no piso". O indicador preserva a informação (no piso de renda só 4,41% compram);
+# a mediana só neutraliza o valor constante, que distorceria a escala.
 FLOOR_COLS = ["Annual_Income_USD", "Daily_Commute_km"]
 
 # Numéricas sem tratamento especial (só imputação de segurança + escala)
@@ -168,6 +170,7 @@ def describe_preprocessing(pre, X_train, X_train_t, X_test_t) -> str:
     lines.append("\nFaixa das numéricas ANTES do escalonamento (justifica o StandardScaler):")
     ranges = X_train[FLOOR_COLS + PLAIN_NUMERIC].agg(["min", "max"]).T
     lines.append(ranges.to_string())
+    lines.append(f"\nFeatures antes do pipeline: {X_train.shape[1]} | depois: {X_train_t.shape[1]}")
 
     names = pre.get_feature_names_out()
     lines.append(f"\nShape treino após pipeline: {X_train_t.shape}")
