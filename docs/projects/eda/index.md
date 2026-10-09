@@ -121,33 +121,247 @@ categorias), já estão descritas pela tabela.
 
 ## 5. Análise bivariada e correlações
 
-Relação entre as features e o alvo, e entre as features.
 
-!!! danger "Correlação alta demais com o alvo é suspeita"
+Todas as estatísticas desta seção foram calculadas **só no conjunto de treino** (534.932 linhas).
+A taxa geral de `Yes` no treino é **17,46%** (Seção 3), e é a referência de todas as comparações abaixo.
 
-    Uma feature que prevê o alvo quase perfeitamente costuma ser **vazamento**: informação
-    que só existe depois do fato que você quer prever. Investigue antes de comemorar.
+### 5.A Numérica × numérica
+
+**Método.** Usamos a correlação de **Spearman**. Quatro das sete numéricas são contagens ou escalas
+ordinais (`Number_of_Cars_Owned`, `Charging_Stations_Near_Home`, `Charging_Stations_Near_Work`,
+`Environmental_Concern_Level`), e `Annual_Income_USD` e `Daily_Commute_km` têm picos
+exatamente no valor mínimo (9,20% e 21,59%, Seção 4) que distorcem Pearson. Spearman mede relação
+monotônica sem supor normalidade e é menos sensível a esses picos. Na prática os dois métodos
+concordam: o par mais correlacionado tem ρ = +0,543 (Spearman) e r = +0,510 (Pearson), e as demais
+células diferem em no máximo 0,03.
+
+![Matriz de correlação de Spearman](figures/fig08-correlacao.svg)
+/// caption
+**Figura 8** — Correlação de Spearman entre as 7 numéricas (treino).
+///
+
+**Conclusão (Fig. 8).** O par mais correlacionado é **`Charging_Stations_Near_Home` ×
+`Charging_Stations_Near_Work` (ρ = +0,543)**. É uma correlação moderada, **abaixo do limiar de 0,7** que
+usamos para chamar um par de redundante: nenhum dos 21 pares passa dele. O segundo maior é
+`Annual_Income_USD` × `Environmental_Concern_Level` (ρ = +0,075), e todos os demais ficam abaixo de
+|0,05|. Portanto **não removemos nenhuma numérica por redundância**; as duas contagens de estações de
+carregamento ficam, porque cada uma tem relação quase nula com o alvo (ρ = −0,022 e −0,014) e a
+colinearidade moderada não prejudica uma rede neural.
+
+![Scatter dos pares mais correlacionados](figures/fig09-scatter-pares.svg)
+/// caption
+**Figura 9** — Dispersão dos 3 pares numéricos mais correlacionados (amostra de 5.000 linhas do treino).
+///
+
+**Conclusão (Fig. 9).** no par das estações de carregamento a nuvem
+mostra tendência positiva, em grade, porque as duas variáveis são contagens inteiras; nos outros dois pares
+(ρ = +0,075 e +0,043) não há padrão visível. Isso **confirma** a conclusão da Figura 8: só um par tem
+relação apreciável, e ela é moderada.
+
+**Correlação com o alvo.** As numéricas mais associadas a `Will_Buy_EV` são
+**`Environmental_Concern_Level` (ρ = +0,461)** e **`Annual_Income_USD` (ρ = +0,224)**.
+`Daily_Commute_km` tem ρ = −0,044 e as quatro restantes têm |ρ| ≤ 0,022, isto é, nenhuma
+associação monotônica detectável com o alvo individualmente.
+
+### 5.B Categórica × alvo
+
+Em cada figura, a linha tracejada é a taxa geral de `Yes` (17,46%). Barras longe dela indicam
+categorias que mudam a probabilidade de compra.
+
+![Subsidy_Available e Home_Charging_Possible vs alvo](figures/fig10-cat-vs-alvo-1.svg)
+/// caption
+**Figura 10** — Proporção de `Yes` por categoria de `Subsidy_Available` e `Home_Charging_Possible`.
+///
+
+**Conclusão (Fig. 10).**
+
+- **`Subsidy_Available`:** sem subsídio (198.952 linhas) a taxa de `Yes` é de apenas **0,57%**; com
+  subsídio (335.980 linhas) é de **27,47%**, cerca de 48 vezes maior. Estimamos, a partir dessas taxas e
+  contagens, que cerca de 99% dos compradores do treino têm subsídio disponível. Praticamente ninguém compra
+  sem ele, o que faz dessa a feature categórica mais forte do dataset.
+- **`Home_Charging_Possible`:** 12,69% sem carregador em casa contra 19,59% com ele (+6,9 p.p., ×1,54).
+  É um efeito real, mas moderado.
+
+**Decisão sobre `Subsidy_Available`.** Não a classificamos como vazamento, porque **não é derivada do
+alvo**: (conferir secção de vazamento de dados). É uma condição que existe antes da decisão de compra
+e tem leitura econômica direta. Mas a relação é tão forte que o modelo pode se apoiar quase só nela e
+mascarar as outras features. Por isso **vamos treinar com e sem `Subsidy_Available`** na entrega de
+Classificação e comparar as métricas. O `preprocess.py` já aceita as duas versões (`use_subsidy=True/False`).
+
+![Range_Anxiety_Level e City_Type vs alvo](figures/fig11-cat-vs-alvo-2.svg)
+/// caption
+**Figura 11** — Proporção de `Yes` por `Range_Anxiety_Level` e `City_Type`.
+///
+
+**Conclusão (Fig. 11).**
+
+- **`Range_Anxiety_Level`:** a taxa cai de **18,90%** (Low, 483.239 linhas, 90,3% do treino) para
+  **4,18%** (Medium, 49.920 linhas) e **0,11%** (High, 1.773 linhas). A relação é monotônica e quase
+  determinística nos níveis Medium e High: quem tem ansiedade de autonomia acima de Low praticamente nunca
+  compra.
+- **Decisão: descartamos `Range_Anxiety_Level`.** (verificar secção de vazamento de dados). Uma feature construída a partir do que
+  queremos prever carrega o rótulo para dentro do modelo e inflaria as métricas sem generalizar. Ela fica
+  visível nesta figura só como evidência da decisão; fora desta seção, não entra em nenhum modelo nem nas projeções
+  PCA, t-SNE e UMAP.
+- **`City_Type`:** Rural 19,34%, Suburban 18,13%, Urban 16,07%. A amplitude é de **3,27 p.p.**, efeito
+  pequeno.
+
+![Current_Car_Type e Gender vs alvo](figures/fig12-cat-vs-alvo-3.svg)
+/// caption
+**Figura 12** — Proporção de `Yes` por `Current_Car_Type` e `Gender`.
+///
+
+**Conclusão (Fig. 12).** `Current_Car_Type` varia de 15,75% (Truck) a 18,12% (SUV), amplitude de
+**2,37 p.p.**, e `Gender` varia de 17,25% (Male) a 17,76% (Other), apenas **0,51 p.p.** Nenhuma das duas
+tem poder preditivo relevante sozinha. `Gender = Other` tem só 4.250 linhas (0,8% do treino), então a taxa dessa
+categoria é a menos estável.
+
+### 5.C Numérica × categórica
+
+![Annual_Income_USD por City_Type](figures/fig13-box-annual-income-usd.svg)
+/// caption
+**Figura 13** — `Annual_Income_USD` por `City_Type` (treino).
+///
+
+**Conclusão (Fig. 13).** As medianas são praticamente iguais: Rural 84.768, Suburban 85.475 e
+Urban 84.748 (diferença máxima de 727, menos de 1%). O espalhamento difere pouco: o IQR é de 38.422 em
+Rural contra 34.738 em Suburban e 34.091 em Urban (de 10% a 13% maior em Rural). Os grupos **não diferem em
+posição e diferem levemente em espalhamento**, com a zona rural mais dispersa. A renda não depende do
+tipo de cidade.
+
+![Daily_Commute_km por Current_Car_Type](figures/fig14-box-daily-commute-km.svg)
+/// caption
+**Figura 14** — `Daily_Commute_km` por `Current_Car_Type` (treino).
+///
+
+**Conclusão (Fig. 14).** As medianas ficam entre 33,0 km (Sedan) e 34,2 km (SUV), amplitude de 1,2 km. O IQR
+vai de 29,40 (Hatchback) a 32,57 (Truck), e o desvio-padrão de 18,56 a 19,20. Os grupos **não diferem em
+posição e quase não diferem em espalhamento**; Truck é o mais disperso. Os 21,59% de linhas no
+piso de 5,0 km estão em todos os grupos e achatam o limite inferior das caixas.
+
+![Annual_Income_USD por Will_Buy_EV](figures/fig15-box-annual-income-usd.svg)
+/// caption
+**Figura 15** — `Annual_Income_USD` por `Will_Buy_EV` (treino).
+///
+
+**Conclusão (Fig. 15).** A mediana da renda é **95.966** para `Yes` (93.423 linhas) e **82.823** para `No` (441.509 linhas), uma diferença de 13.143 (cerca de 16% maior entre compradores). O espalhamento é parecido: IQR de 34.987 contra 33.258 e desvio-padrão de 26.273 contra 28.217. Os grupos diferem **em posição, não em espalhamento**: quem compra tem renda mediana mais alta, mas a variabilidade é a mesma. Isso é coerente com ρ = +0,224 entre renda e alvo (Seção 5.A), uma associação real porém moderada, já que as duas caixas se sobrepõem bastante.
+
+### 5.D Síntese da seção
+
+- **Sem redundância forte entre numéricas.** O maior ρ é 0,543 (estações de carregamento em casa e no
+  trabalho), abaixo de 0,7; nenhuma numérica é removida por correlação (Fig. 8).
+- **O sinal numérico está em `Environmental_Concern_Level` (ρ = +0,461) e `Annual_Income_USD`
+  (ρ = +0,224).** Compradores têm renda mediana de 95.966 contra 82.823 dos não compradores (Fig. 15).
+  As demais numéricas têm |ρ| ≤ 0,044 com o alvo.
+- **`Range_Anxiety_Level` é descartada** (derivada do alvo): 0,11% de `Yes` em High e 4,18% em Medium
+  (Fig. 11).
+- **`Subsidy_Available` é a categórica mais forte** (0,57% contra 27,47%, Fig. 10), mas não é derivada
+  do alvo; será testada com e sem na Classificação.
+- **`Gender`, `City_Type` e `Current_Car_Type` têm efeito pequeno** (amplitudes de 0,51, 3,27 e 2,37 p.p.,
+  Figs. 11 e 12), e renda e deslocamento não variam com cidade ou carro (Figs. 13 e 14).
+- **Implicação para a modelagem:** o desbalanceamento (17,46% de `Yes`) e a dependência de poucas features
+  (`Subsidy_Available`, `Environmental_Concern_Level`, `Annual_Income_USD`) são os riscos principais.
+  Comparar o desempenho com e sem `Subsidy_Available` mostra quanto o modelo depende dela.
+
+
 
 ## 6. Qualidade dos dados
 
-### Valores ausentes
+Todos os números desta seção são do conjunto de **treino** (534.932 linhas, 15 colunas incluindo `id` e o alvo).
+O teste só entra na checagem de categorias novas.
 
-| Feature | % ausente | Padrão (aleatório?) | Tratamento planejado |
-|---------|-----------|---------------------|----------------------|
-| | | | |
+### 6.1 Valores ausentes
 
-Ausência raramente é aleatória. Se falta mais em um grupo do que em outro, o próprio "estar
-ausente" carrega informação.
+| Feature | Ausentes | % ausente | Padrão | Tratamento planejado |
+|---------|----------|-----------|--------|----------------------|
+| Todas as 15 colunas | 0 | 0,00% | não se aplica | nenhum (o pipeline mantém um `SimpleImputer` por segurança) |
 
-### Duplicatas e inconsistências
+**Nenhuma coluna tem valores ausentes**, então a coluna com mais faltantes tem 0 linhas (0,00%).
+Isso não significa que os dados estejam completos: os pisos de renda e deslocamento (Seção 6.3) não aparecem como
+`NaN` e foram investigados à parte.
 
-Linhas repetidas, categorias escritas de formas diferentes, unidades misturadas, datas
-impossíveis.
+### 6.2 Duplicatas e inconsistências
 
-### Outliers
+| Verificação | Resultado |
+|-------------|-----------|
+| Linhas duplicadas (todas as colunas) | 0 (0,00%) |
+| Linhas duplicadas ignorando o `id` (features + alvo) | 0 (0,00%) |
+| `id` | 534.932 valores únicos em 534.932 linhas (todos distintos) |
+| Colunas constantes | nenhuma |
+| Valores impossíveis (idade fora de 18–110, renda ≤ 0, deslocamento < 0 ou > 500 km, contagens < 0, `Environmental_Concern_Level` fora de 1–5) | 0 linhas em todas as regras |
+| Valores não inteiros em colunas de contagem (`Age`, `Number_of_Cars_Owned`, `Charging_Stations_*`, `Environmental_Concern_Level`) | 0 |
+| Categóricas com grafias duplicadas (após `strip` e `lower`) ou placeholders (`Unknown`, `N/A`, `?`) | nenhuma |
+| Categorias no teste ausentes do treino | nenhuma, nas 6 categóricas |
 
-Como foram detectados e o que será feito com eles — e por quê. Remover outlier é decisão de
-modelagem, não faxina.
+Os limites de "valor impossível" são nossos: [citar a fonte, se a página do Kaggle descrever as faixas válidas; se não,
+dizer que são limites de bom senso]. O fato de nenhuma categoria nova aparecer no teste não elimina `handle_unknown="ignore"`
+no encoding: mantemos para o caso de o modelo receber dados novos, como o `test.csv` da competição.
+
+### 6.3 Valores no piso
+
+`Annual_Income_USD` tem **49.191 linhas (9,20%)** exatamente em 30.000, e `Daily_Commute_km` tem
+**115.506 linhas (21,59%)** exatamente em 5,0 km (Seção 4). Nenhuma das duas colunas tem `NaN`. Testamos a hipótese de
+que esses valores sejam respostas ausentes disfarçadas no mínimo da escala, comparando a taxa de `Yes` dentro e fora do piso:
+
+| Feature | Linhas no piso | `Yes` no piso | `Yes` fora do piso | `Yes` geral |
+|---------|----------------|---------------|--------------------|-------------|
+| `Annual_Income_USD` (30.000) | 49.191 (9,20%) | **4,41%** | 18,79% | 17,46% |
+| `Daily_Commute_km` (5,0 km) | 115.506 (21,59%) | 18,43% | 17,20% | 17,46% |
+
+Nos dois pisos ao mesmo tempo estão 11.018 linhas (2,06%). Se os dois pisos fossem independentes, esperaríamos
+cerca de 10.600. Em pelo menos um piso estão 153.679 linhas (28,73%).
+
+**O que isso mostra.**
+
+- **Renda.** A taxa de `Yes` no piso (4,41%) é quatro vezes menor que fora dele (18,79%). Uma não-resposta aleatória
+  teria taxa perto da geral (17,46%). O grupo do piso se comporta como pessoas de renda baixa, o que é coerente com a
+  correlação de +0,224 entre renda e alvo (Seção 5.A) e com valores truncados no mínimo. Portanto **esse grupo é informativo, e
+  apagar seu valor com a mediana destruiria sinal.**
+- **Deslocamento.** A taxa no piso (18,43%) é próxima da de fora (17,20%), e o deslocamento quase não se relaciona com o
+  alvo (ρ = −0,044). Não há evidência de que o piso seja diferente das demais linhas.
+- **Independência dos pisos.** O número de linhas nos dois pisos (11.018) é quase o esperado sob independência (cerca de
+  10.600). Isso é contra a ideia de um respondente que pulou vários campos de uma vez.
+
+**Conclusão e revisão do achado da Seção 4.** A hipótese de "não-resposta disfarçada" **não se sustenta para a renda**
+e não tem apoio para o deslocamento. O mais provável é que os valores tenham sido truncados no mínimo da escala. Isso é
+uma interpretação, não uma prova: não temos o gerador do dataset. Tratamento proposto (Seção 8, estratégia de faltantes e
+outliers): **manter os valores originais no piso e acrescentar um indicador binário "no piso" para cada uma das duas
+colunas**, sem imputação por mediana.
+
+### 6.4 Outliers
+
+Método: **IQR com k = 1,5** (limites Q1 − 1,5·IQR e Q3 + 1,5·IQR), calculado no treino.
+
+| Feature | Limites | Outliers | % do treino |
+|---------|---------|----------|-------------|
+| `Age` | [3,00; 91,00] | 0 | 0,00% |
+| `Annual_Income_USD` | [14.323,50; 155.807,50] | 2.926 | 0,55% |
+| `Daily_Commute_km` | [−28,10; 92,70] | 37 | 0,01% |
+| `Number_of_Cars_Owned` | [−0,50; 3,50] | 10.725 | 2,00% |
+| `Charging_Stations_Near_Home` | [−5,50; 14,50] | 0 | 0,00% |
+| `Charging_Stations_Near_Work` | [−7,50; 20,50] | 0 | 0,00% |
+| `Environmental_Concern_Level` | [−1,00; 7,00] | 0 | 0,00% |
+
+- **Renda e deslocamento:** são contínuas, e os outliers são caudas altas (renda máxima 188.549, deslocamento máximo
+  98,7 km), sem valores absurdos. **Winsorizamos** nos limites do IQR, em vez de remover linhas: são poucas (0,55% e 0,01%) e o
+  `StandardScaler`, que usaremos por causa da rede neural, é sensível a caudas. Remover linhas seria uma decisão de
+  modelagem, e não vemos erro de dado que a justifique.
+- **`Number_of_Cars_Owned`:** os 10.725 "outliers" são todos os que têm **4 carros**. A regra do IQR não se aplica a uma variável
+  discreta com 4 valores e IQR de 1: o valor 4 é legítimo. **Não tratamos.**
+- **Idade, estações e preocupação ambiental:** nenhum outlier.
+- **Linhas afetadas pela estratégia** (item 8 da tabela final): [preencher com o `preprocess_output.txt`].
+
+### 6.5 Colunas descartadas
+
+| Coluna | Motivo | Evidência |
+|--------|--------|-----------|
+| `id` | Identificador, não é feature | 534.932 valores únicos em 534.932 linhas |
+| `Range_Anxiety_Level` | Derivada do alvo (vazamento) | [fonte]; `Yes` em 18,90% (Low), 4,18% (Medium) e 0,11% (High), Seção 5.B |
+| (nenhuma constante) | | 0 colunas constantes |
+
+`Subsidy_Available` **não** é descartada: tem relação muito forte com o alvo (0,57% contra 27,47% de `Yes`), mas não é
+derivada dele. Será treinada com e sem a coluna na entrega de Classificação (Seção 5.B).
+
 
 ## 7. Riscos de vazamento
 
