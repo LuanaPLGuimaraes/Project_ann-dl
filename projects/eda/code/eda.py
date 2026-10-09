@@ -7,7 +7,7 @@ pd.set_option("display.max_columns", None)
 pd.set_option("display.width", 200)
 
 BASE_DIR = Path(__file__).resolve().parent
-DATA_PATH = (BASE_DIR / "../../data/train.csv").resolve()
+DATA_PATH = (BASE_DIR / "../../../../data/train.csv").resolve()
 FIGURES_DIR = (BASE_DIR / "../figures").resolve()
 OUTPUT_PATH = (BASE_DIR / "../output/eda_output.txt").resolve()
 
@@ -89,47 +89,6 @@ def plot_univariate_histograms(train_df, start: int = 2):
         ax.set_title(f"Distribuição de {col} (treino)")
         saved.append(save_fig(fig, f"fig{i:02d}-{col.lower().replace('_', '-')}.svg"))
     return saved
-
-
-def plot_numeric_by_target(train_df, start: int = 5):
-    """Histograma sobreposto por classe do alvo."""
-    saved = []
-    for i, col in enumerate(HIST_FEATURES, start=start):
-        fig, ax = plt.subplots(figsize=(6, 4))
-        for cls, group in train_df.groupby(TARGET):
-            ax.hist(group[col].dropna(), bins=40, alpha=0.5, label=str(cls), density=True)
-        ax.set_xlabel(col)
-        ax.set_ylabel("Densidade")
-        ax.set_title(f"{col} por {TARGET}")
-        ax.legend(title=TARGET)
-        saved.append(save_fig(fig, f"fig{i:02d}-{col.lower().replace('_', '-')}-por-alvo.svg"))
-    return saved
-
-
-def plot_categorical_vs_target(train_df, start: int = 8):
-    """Taxa média do alvo por categoria (alvo precisa ser 0/1)."""
-    saved = []
-    for i, col in enumerate(CATEGORICAL_COLS, start=start):
-        rate = train_df.groupby(col)[TARGET].mean().sort_values()
-        fig, ax = plt.subplots(figsize=(6, 4))
-        ax.barh(rate.index.astype(str), rate.values, color="#2a78d6")
-        ax.axvline(train_df[TARGET].mean(), color="gray", linestyle="--", label="média geral")
-        ax.set_xlabel(f"Taxa de {TARGET}")
-        ax.set_title(f"{TARGET} por {col}")
-        ax.legend()
-        saved.append(save_fig(fig, f"fig{i:02d}-{col.lower().replace('_', '-')}-por-alvo.svg"))
-    return saved
-
-
-def plot_correlation(train_df, fig_name):
-    corr = train_df[NUMERIC_COLS + [TARGET]].corr()
-    fig, ax = plt.subplots(figsize=(8, 6))
-    im = ax.imshow(corr, cmap="coolwarm", vmin=-1, vmax=1)
-    ax.set_xticks(range(len(corr)), corr.columns, rotation=90)
-    ax.set_yticks(range(len(corr)), corr.columns)
-    fig.colorbar(im, ax=ax)
-    ax.set_title("Correlação (treino)")
-    return [save_fig(fig, fig_name)]
 
 
 def describe_numeric(train_df):

@@ -85,17 +85,7 @@ Annual_Income_USD: 49191 amostras (9.20%) no valor mínimo (30000.0)
 Daily_Commute_km: 115506 amostras (21.59%) no valor mínimo (5.0)
 
 === Figuras salvas ===
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig01-distribuicao-alvo.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig02-age.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig03-annual-income-usd.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig04-daily-commute-km.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig05-age-por-alvo.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig06-annual-income-usd-por-alvo.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig07-daily-commute-km-por-alvo.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig08-gender-por-alvo.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig09-city-type-por-alvo.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig10-current-car-type-por-alvo.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig11-home-charging-possible-por-alvo.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig12-subsidy-available-por-alvo.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig13-range-anxiety-level-por-alvo.svg
-/Users/laurapontiroli/Desktop/Project_ann-dl/docs/projects/eda/figures/fig14-correlacao.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig01-distribuicao-alvo.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig02-age.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig03-annual-income-usd.svg
+C:\Users\Administrador\Documents\8o Semestre\projeto_redes\Project_ann-dl\docs\projects\eda\figures\fig04-daily-commute-km.svg
