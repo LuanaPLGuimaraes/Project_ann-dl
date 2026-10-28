@@ -1,0 +1,10 @@
+=== Baselines de classificação (use_subsidy=True) ===
+Split oficial de teste não utilizado. Validação estratificada retirada do treino: ajuste=427,945 linhas; validação=106,987 linhas.
+Distribuição na validação: {0: 82.54, 1: 17.46} (0=No, 1=Yes).
+Threshold de classificação: 0,5; nenhum balanceamento de classes aplicado.
+Métricas de validação (%):
+                            Acurácia  Acurácia balanceada  Precisão  Revocação     F1  ROC AUC
+Modelo                                                                                        
+Dummy (classe majoritária)     82.54                50.00      0.00       0.00   0.00    50.00
+Regressão logística            89.24                79.44     71.21      64.39  67.63    93.57
+Random forest                  89.34                79.20     72.06      63.62  67.58    93.49
