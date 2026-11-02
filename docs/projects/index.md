@@ -12,7 +12,7 @@ ao longo do semestre, cada uma com data e peso próprios.
 | Nome completo | E-mail | GitHub |
 |---------------|--------|--------|
 | Luana Prado Lopes Guimaraes | luanaplg@al.insper.edu.br | LuanaPLGuimaraes |
-| Laura Pontiroli Machado | laurapm@alinsper.edu.br | laupontiroli |
+| Laura Pontiroli Machado | laurapm@al.insper.edu.br | laupontiroli |
 
 ## As três entregas
 
