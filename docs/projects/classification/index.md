@@ -23,10 +23,6 @@ ai_use: "Uso assistido de IA (Claude) para discutir critérios metodológicos, r
 
 Esta entrega parte do [EDA](../eda/index.md), que já caracterizou o dataset em profundidade. Aqui resumimos e apontamos para lá em vez de repetir a análise.
 
-## 0. Ponto de partida
-
-O dataset e as decisões da equipe ficam na [página do projeto](../index.md). Esta entrega parte do [EDA](../eda/index.md), que já caracterizou os dados em profundidade; aqui resumimos e apontamos para lá em vez de repetir a análise.
-
 ## Escolha do dataset
 
 Usamos o dataset **Playground Series S6E9 – Predicting Electric Vehicle Purchases**, do Kaggle ([link](https://www.kaggle.com/competitions/playground-series-s6e9)). O arquivo de treino tem 668.665 linhas, 13 variáveis explicativas, um `id` e o alvo `Will_Buy_EV` (Yes/No). A tarefa é uma classificação binária que não é trivial por três motivos: o alvo é desbalanceado (17,46% "Yes"), as variáveis misturam tipos numéricos e categóricos, e os dados têm particularidades que o EDA documentou (valores acumulados no piso de renda e deslocamento, e uma variável que praticamente entrega a resposta).
@@ -38,6 +34,12 @@ Usamos o dataset **Playground Series S6E9 – Predicting Electric Vehicle Purcha
 - **Categóricas (5):** `Gender`, `City_Type`, `Current_Car_Type`, `Home_Charging_Possible` e `Subsidy_Available`.
 - **Descartada:** `Range_Anxiety_Level`, por quase determinar o alvo (vazamento).
 
+**Problemas herdados do EDA que esta entrega precisa tratar:** o desbalanceamento do alvo; os valores no piso (9,20% da renda é exatamente 30.000 e 21,59% do deslocamento é exatamente 5 km), tratados com indicador de ausência e mediana; os outliers, tratados por winsorização; e o risco de vazamento, evitado ao descartar `Range_Anxiety_Level` e ao ajustar o pré-processamento só no treino.
+
+## 0. Ponto de partida
+
+**Dados e divisão.** O conjunto de treino tem 534.932 linhas e o de teste, 133.733 (divisão 80/20 estratificada, `random_state=42`, a mesma do [EDA](../eda/index.md)). A validação foi retirada do treino: 427.945 linhas para ajuste e 106.987 para validação, também estratificada com seed 42. A proporção do alvo é 82,54% "No" e 17,46% "Yes" nos três conjuntos. **O teste só será usado uma vez, na etapa 5.**
+
 **Pré-processamento.** Reutilizamos o pipeline definido no [plano de pré-processamento do EDA](../eda/index.md#8-plano-de-pre-processamento), implementado em `eda/code/preprocess.py`: tratamento dos valores no piso (renda = 30.000 e deslocamento = 5 km) com indicador de ausência e imputação pela mediana, winsorização por IQR, padronização das numéricas e one-hot das categóricas. `Range_Anxiety_Level` e `id` são descartados. O pipeline é ajustado somente nas linhas de ajuste, nunca na validação nem no teste. `Subsidy_Available` é mantida (justificativa na etapa 1).
 
 **Métrica principal: PR-AUC da classe "Yes"** (área sob a curva precisão-recall, calculada como *average precision*). Escolhida *antes* de treinar a rede porque:
@@ -46,7 +48,7 @@ Usamos o dataset **Playground Series S6E9 – Predicting Electric Vehicle Purcha
 - ela avalia o ordenamento das probabilidades em todos os cortes, sem depender do corte de 0,5, o que mantém a comparação justa quando a rede usar ponderação de classes (que desloca as probabilidades);
 - um modelo que ordena ao acaso obtém PR-AUC igual à proporção de "Yes" (17,46%), e o perfeito obtém 100%.
 
-Reportamos também precisão, recall, F1, acurácia balanceada e ROC-AUC como métricas secundárias.
+Reportamos também precisão, recall, F1, F1 macro, acurácia balanceada e ROC-AUC como métricas secundárias.
 
 **Critério de sucesso (definido antes de treinar a rede):** a PR-AUC da rede no teste, em média de 3 seeds, deve superar a da melhor baseline no teste em pelo menos 1 ponto percentual, e essa diferença deve ser maior que o desvio padrão entre as seeds. O limiar de 1 ponto é uma escolha de julgamento: as duas baselines diferem em apenas 0,08 ponto de PR-AUC na validação, então diferenças bem menores que 1 ponto não se distinguem de ruído.
 
