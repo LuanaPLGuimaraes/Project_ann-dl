@@ -1,0 +1,15 @@
+=== Rede base (64-32, ReLU, AdamW lr=1e-3, batch=1024, sem regularização) ===
+Parâmetros: 3,521
+Épocas treinadas: 27 | melhor época (loss de validação): 17
+Loss de validação na melhor época: 0.2364
+Loss de treino na melhor época: 0.2342
+PR-AUC de validação na melhor época: 0.7379
+PR-AUC de validação máxima: 0.7380 (época 24)
+Métricas na validação (melhores pesos, corte 0,5), em %:
+  Acurácia: 89.24
+  Acurácia balanceada: 80.12
+  Precisão: 70.44
+  Recall: 66.11
+  F1: 68.21
+  ROC AUC: 93.60
+  PR-AUC: 73.79

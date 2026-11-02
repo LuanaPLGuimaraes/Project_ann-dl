@@ -42,7 +42,7 @@ Usamos o dataset **Playground Series S6E9 – Predicting Electric Vehicle Purcha
 
 **Pré-processamento.** Reutilizamos o pipeline definido no [plano de pré-processamento do EDA](../eda/index.md#8-plano-de-pre-processamento), implementado em `eda/code/preprocess.py`: tratamento dos valores no piso (renda = 30.000 e deslocamento = 5 km) com indicador de ausência e imputação pela mediana, winsorização por IQR, padronização das numéricas e one-hot das categóricas. `Range_Anxiety_Level` e `id` são descartados. O pipeline é ajustado somente nas linhas de ajuste, nunca na validação nem no teste. `Subsidy_Available` é mantida (justificativa na etapa 1).
 
-**Métrica principal: PR-AUC da classe "Yes"** (área sob a curva precisão-recall, calculada como *average precision*). Escolhida *antes* de treinar a rede porque:
+**Métrica principal: PR-AUC da classe "Yes" com apoio da F1** (área sob a curva precisão-recall, calculada como *average precision*). Escolhida *antes* de treinar a rede porque:
 
 - o alvo é desbalanceado (17,46% "Yes"): a acurácia engana, já que o Dummy acerta 82,54% sem aprender nada;
 - ela avalia o ordenamento das probabilidades em todos os cortes, sem depender do corte de 0,5, o que mantém a comparação justa quando a rede usar ponderação de classes (que desloca as probabilidades);
@@ -75,15 +75,43 @@ Os três modelos usam o mesmo pipeline e foram avaliados na validação (o teste
 
 ## 2. A rede
 
-<!-- Exigido: camadas, larguras, ativações e inicialização justificadas; nº de parâmetros vs. nº de linhas de treino; 1 unidade de saída + BCEWithLogitsLoss (a rede devolve logits); rede e loop de treino em code/. -->
+**Arquitetura.** Perceptron multicamadas com 21 entradas (as colunas do pipeline), duas camadas ocultas de 64 e 32 neurônios e uma única unidade de saída que devolve um *logit*. A implementação está em `code/network.py`.
 
-(a preencher)
+| | Escolha | Por quê |
+|---|---------|---------|
+| Camadas ocultas | 64 → 32 | As baselines mostraram uma relação quase linear (a regressão logística empata com a random forest), então não há motivo para uma rede grande. Duas camadas permitem capturar interações entre variáveis, e o funil resume a informação em conceitos mais compactos. |
+| Ativação | ReLU | Não satura e deixa o gradiente passar onde está ativa (a sigmoid o encolhe até 4 vezes por camada). |
+| Saída | 1 unidade, sem ativação (logit) | Classificação binária. A sigmoid fica dentro da perda. |
+| Perda | `BCEWithLogitsLoss` | Combina sigmoid e entropia cruzada de forma numericamente estável. Na rede base não usamos pesos de classe (ficam para a etapa 4). |
+| Inicialização | He (Kaiming) | Escala os pesos por √(2/n) para manter a variância dos sinais estável com ReLU, evitando que o sinal ou o gradiente encolham ou explodam no início do treino. Os biases começam em zero. |
+
+**Parâmetros vs. dados.** A rede tem 3.521 parâmetros (21×64+64, 64×32+32 e 32+1) para 427.945 linhas de ajuste, cerca de 1 parâmetro para cada 121 linhas. Há muito dado por parâmetro, o que torna o overfitting pouco provável, e isso é verificado na etapa 3.
 
 ## 3. Treinamento
 
-<!-- Exigido: otimizador (SGD+momentum/Adam/AdamW), learning rate, batch e épocas justificados; early stopping na validação restaurando os melhores pesos; curvas de treino e validação por época, LIDAS no texto (converge? onde começa o overfitting?). -->
+**Configuração.** Otimizador AdamW sem weight decay, taxa de aprendizado 0,001, batch de 1.024, no máximo 100 épocas e early stopping sobre a loss de validação (paciência de 10 épocas, restaurando os pesos da melhor época). Seed 42. O código está em `code/train.py` e `code/data_prep.py`, e a validação é a mesma das baselines.
 
-(a preencher)
+- **AdamW:** adapta o passo de cada peso e converge rápido sem muito ajuste. O weight decay é zero aqui, porque a rede base é a referência *sem regularização* da etapa 4.
+- **Taxa 0,001:** valor usual do Adam. É um ponto de partida, e a taxa entra na busca da etapa 4.
+- **Batch 1.024:** com 428 mil linhas, lotes grandes dão correções estáveis e épocas rápidas (~0,6 s em CPU). O custo é menos ruído nos passos.
+- **Early stopping pela loss de validação:** é uma curva suave, boa de ler. A PR-AUC de validação é registrada a cada época.
+
+![Curvas de loss e PR-AUC por época da rede base](figures/fig01-curvas-treino-base.svg)
+/// caption
+**Figura 1** — Loss de treino e de validação (esquerda) e PR-AUC de validação (direita) por época. A linha tracejada marca a melhor época.
+///
+
+**Leitura das curvas.** A rede converge: a loss cai muito nas duas primeiras épocas e depois quase estabiliza. A melhor época pela loss de validação é a 17 (0,2364), e o treino parou na 27, que é 17 mais a paciência de 10. A partir da época 17 a loss de treino continua caindo devagar (0,2342 → 0,2335), mas a de validação fica estável em ~0,2365, o que indica um overfitting leve, com distância de só ~0,002 entre as duas curvas. Isso é coerente com a rede ter poucos parâmetros para muitos dados. A PR-AUC de validação estabiliza em ~0,738 a partir da época 13 e oscila cerca de ±0,001 entre épocas.
+
+**Rede base na validação** (melhores pesos, corte 0,5, em %):
+
+| Modelo | Acurácia | Acur. balanceada | Precisão | Recall | F1 | ROC AUC | PR-AUC |
+|---|---|---|---|---|---|---|---|
+| Regressão logística | 89,24 | 79,44 | 71,21 | 64,39 | 67,63 | 93,57 | 73,72 |
+| Random forest | 89,33 | 79,20 | 72,01 | 63,63 | 67,56 | 93,50 | 73,80 |
+| Rede base | 89,24 | 80,12 | 70,44 | 66,11 | 68,21 | 93,60 | 73,79 |
+
+Na métrica principal, a rede base empata com as baselines (diferença de menos de 0,1 ponto). O F1 e o recall ligeiramente maiores refletem uma troca entre precisão e recall no corte 0,5, e não um melhor ordenamento dos clientes, que é o que a PR-AUC mede. Os números da rede estão levemente otimistas, porque a validação foi usada para escolher a melhor época e a estimativa não enviesada virá do teste, na etapa 5.
 
 ## 4. Regularização e hiperparâmetros
 
