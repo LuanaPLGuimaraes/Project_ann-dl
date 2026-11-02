@@ -115,9 +115,51 @@ Na métrica principal, a rede base empata com as baselines (diferença de menos 
 
 ## 4. Regularização e hiperparâmetros
 
-<!-- Exigido: pelo menos 2 técnicas (weight decay, dropout, BatchNorm/LayerNorm) comparadas com a rede sem nenhuma; busca com pelo menos 8 configurações escolhidas pela VALIDAÇÃO, em tabela ordenada. -->
+**Protocolo.** Treinamos 12 configurações da rede (seed 42, early stopping pela loss de validação) e as comparamos pela **PR-AUC de validação na melhor época**. O teste não foi usado. Como as diferenças são pequenas, as 3 melhores foram refeitas com 3 seeds (42, 43 e 44), e a escolha final seguiu a maior média, regra definida antes dos resultados. O código está em `code/search.py`.
 
-(a preencher)
+Técnicas comparadas com a rede sem nenhuma regularização:
+
+- **Weight decay:** penaliza pesos grandes, forçando a rede a ser mais simples.
+- **Dropout:** desliga neurônios ao acaso durante o treino, para a rede não depender de poucos neurônios.
+- **BatchNorm:** reescala as ativações de cada camada por lote, estabilizando o treino, com leve efeito regularizador.
+
+Também variamos o peso da classe rara, a largura e profundidade, a ativação e a taxa de aprendizado.
+
+**Resultados**, ordenados pela PR-AUC de validação (em %):
+
+| # | Configuração | Parâmetros | Melhor época | Loss treino | Loss val | PR-AUC val |
+|---|---|---|---|---|---|---|
+| 1 | Ativação tanh | 3.521 | 17 | 0,2348 | 0,2359 | 73,90 |
+| 2 | Dropout 0,3 | 3.521 | 16 | 0,2394 | 0,2360 | 73,89 |
+| 3 | Dropout 0,1 + weight decay 1e-2 | 3.521 | 28 | 0,2354 | 0,2358 | 73,89 |
+| 4 | Dropout 0,1 | 3.521 | 28 | 0,2354 | 0,2359 | 73,86 |
+| 5 | Menor (32-16) | 1.249 | 32 | 0,2342 | 0,2360 | 73,81 |
+| 6 | Weight decay 1e-2 | 3.521 | 17 | 0,2341 | 0,2363 | 73,79 |
+| 7 | BatchNorm | 3.713 | 32 | 0,2330 | 0,2365 | 73,79 |
+| 8 | Base (64-32, sem regularização) | 3.521 | 17 | 0,2342 | 0,2364 | 73,79 |
+| 9 | Weight decay 1e-4 | 3.521 | 17 | 0,2341 | 0,2364 | 73,76 |
+| 10 | Mais larga (128-64) | 11.137 | 15 | 0,2336 | 0,2366 | 73,75 |
+| 11 | Learning rate 3e-4 | 3.521 | 35 | 0,2340 | 0,2367 | 73,71 |
+| 12 | Peso da classe rara (4,73) | 3.521 | 15 | 0,5127* | 0,5184* | 73,58 |
+
+\* Com peso de classe, a loss é ponderada e não é comparável com as demais. Nas configurações com dropout, a loss de treino é medida com neurônios desligados, por isso fica mais alta.
+
+**Confirmação das 3 melhores com 3 seeds:**
+
+| Configuração | PR-AUC val média (%) | Desvio (pontos) | Por seed (%) |
+|---|---|---|---|
+| Dropout 0,1 + weight decay 1e-2 | 73,93 | 0,05 | 73,89 / 73,91 / 73,99 |
+| Ativação tanh | 73,89 | 0,01 | 73,90 / 73,90 / 73,88 |
+| Dropout 0,3 | 73,88 | 0,03 | 73,89 / 73,85 / 73,91 |
+
+**Configuração escolhida: 64-32 com dropout 0,1 e weight decay 1e-2** (3.521 parâmetros).
+
+**Interpretação.**
+
+- Todas as configurações ficam em uma faixa estreita (73,6 a 73,9). O dropout traz um ganho pequeno e consistente, enquanto o weight decay sozinho e o BatchNorm não mudam a PR-AUC. Isso é coerente com o overfitting ser leve já na rede base (etapa 3), de modo que há pouco para a regularização corrigir.
+- Aumentar a rede (128-64) não ajuda, e uma rede bem menor (32-16, 1.249 parâmetros) empata com a base. A capacidade não é o fator limitante, o que combina com a relação quase linear sugerida pelo empate das baselines.
+- O peso da classe rara reduziu a PR-AUC. O efeito esperado dele é deslocar as probabilidades, o que interessa à escolha do corte (etapa 5), e não à ordenação medida pela PR-AUC.
+- As 3 melhores configurações diferem entre si menos do que o desvio entre seeds, então a escolha final é praticamente um empate. A configuração escolhida supera a base em cerca de 0,1 ponto de PR-AUC, valor maior que o desvio entre seeds (0,05) mas bem abaixo do 1 ponto do critério da etapa 0. A seleção entre 12 configurações na mesma validação também tende a ser levemente otimista, e a estimativa limpa virá do teste.
 
 ## 5. Avaliação no teste
 
