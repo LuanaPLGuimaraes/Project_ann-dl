@@ -20,6 +20,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
 	accuracy_score,
+	average_precision_score,
 	balanced_accuracy_score,
 	f1_score,
 	precision_score,
@@ -74,6 +75,7 @@ def evaluate(model: Pipeline, X_valid: pd.DataFrame, y_valid: pd.Series) -> dict
 		"Revocação": recall_score(y_valid, predictions, zero_division=0),
 		"F1": f1_score(y_valid, predictions, zero_division=0),
 		"ROC AUC": roc_auc_score(y_valid, probabilities),
+		"PR-AUC": average_precision_score(y_valid, probabilities),
 	}
 
 
@@ -113,6 +115,10 @@ def run(use_subsidy: bool = True) -> tuple[dict[str, Pipeline], pd.DataFrame]:
 		+ " (0=No, 1=Yes)."
 	)
 	report.add("Threshold de classificação: 0,5; nenhum balanceamento de classes aplicado.")
+	report.add(
+		"Referência da PR-AUC: um modelo que ordena ao acaso tem PR-AUC igual à "
+		f"proporção de 'Yes' na validação ({y_valid.mean() * 100:.2f}%)."
+	)
 	report.add("Métricas de validação (%):")
 	report.add(metrics.round(2).to_string())
 	report.save()
