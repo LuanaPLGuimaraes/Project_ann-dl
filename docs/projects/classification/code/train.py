@@ -41,9 +41,18 @@ def set_seed(seed: int) -> None:
     torch.manual_seed(seed)
 
 
-def evaluate(model: nn.Module, X: torch.Tensor, y: torch.Tensor, batch_size: int = 8192):
-    """Loss (BCE sem pesos) e PR-AUC em um conjunto, sem ajustar nada."""
-    loss_fn = nn.BCEWithLogitsLoss(reduction="sum")
+def evaluate(
+    model: nn.Module,
+    X: torch.Tensor,
+    y: torch.Tensor,
+    batch_size: int = 8192,
+    pos_weight: float | None = None,
+):
+    """Loss (BCE, com o mesmo peso de classe do treino, se houver) e PR-AUC, sem ajustar nada."""
+    loss_fn = nn.BCEWithLogitsLoss(
+        reduction="sum",
+        pos_weight=None if pos_weight is None else torch.tensor([pos_weight]),
+    )
     model.eval()
     total_loss = 0.0
     probabilities = []
@@ -117,7 +126,9 @@ def fit(
             running += loss.item() * len(idx)
         train_loss = running / len(X)
 
-        val_loss, val_pr_auc = evaluate(model, data["X_valid"], data["y_valid"])
+        val_loss, val_pr_auc = evaluate(
+            model, data["X_valid"], data["y_valid"], pos_weight=pos_weight
+        )
         history["train_loss"].append(train_loss)
         history["val_loss"].append(val_loss)
         history["val_pr_auc"].append(val_pr_auc)
