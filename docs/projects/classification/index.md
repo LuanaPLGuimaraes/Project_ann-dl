@@ -13,16 +13,10 @@ ai_use: "none"
 
     | Nome completo | GitHub |
     |---------------|--------|
-    | | |
-    | | |
-    | | |
+    | Luana Prado Lopes Guimaraes | LuanaPLGuimaraes |
+    | Laura Pontiroli Machado | laupontiroli |
 
     Dataset, decisões e status: [página do projeto](../index.md).
-
-!!! warning "Esta entrega é uma escolha"
-
-    A equipe entrega **classificação ou regressão**, não as duas. Se a escolha foi a outra,
-    apague esta pasta e a linha correspondente na `nav` do `mkdocs.yml`.
 
 O dataset e as decisões da equipe ficam na [página do projeto](../index.md). As duas
 primeiras seções abaixo são exigidas pelo enunciado, mas o [EDA](../eda/index.md) já as
@@ -30,12 +24,27 @@ respondeu em profundidade: **resuma e aponte para lá**, em vez de refazer a an�
 
 ## 1. Escolha do dataset
 
-Nome, URL da fonte, dimensões e por que ele sustenta uma tarefa de classificação não trivial.
+Usamos o **Playground Series — Season 6, Episode 9: Predicting Electric Vehicle Purchases**,
+disponibilizado pelo [Kaggle](https://www.kaggle.com/competitions/playground-series-s6e9). O conjunto
+de treino tem **534.932 amostras** e o conjunto de teste, **133.733**; são 13 features, além do
+identificador `id` e do alvo `Will_Buy_EV`. O dataset permite uma tarefa de classificação binária
+com grande volume de dados e sinais associados à decisão de compra, como preocupação ambiental,
+renda e disponibilidade de subsídio. A análise completa da escolha está no [EDA](../eda/index.md#1-dataset).
 
 ## 2. Descrição do dataset
 
-Features, variável alvo, contexto do domínio e os problemas herdados do EDA que esta entrega
-precisa resolver.
+O objetivo é prever `Will_Buy_EV`, isto é, se a pessoa compraria um veículo elétrico (`Yes` ou
+`No`). As features incluem sete variáveis numéricas (`Age`, `Annual_Income_USD`,
+`Daily_Commute_km`, `Number_of_Cars_Owned`, `Charging_Stations_Near_Home`,
+`Charging_Stations_Near_Work` e `Environmental_Concern_Level`) e seis categóricas (`Gender`,
+`City_Type`, `Current_Car_Type`, `Home_Charging_Possible`, `Subsidy_Available` e
+`Range_Anxiety_Level`). O alvo está desbalanceado: **82,54% `No` e 17,46% `Yes`**.
+
+Do EDA, herdamos três decisões principais: descartamos `id`, que é identificador; excluímos
+`Range_Anxiety_Level` por ser derivada do alvo e representar risco de vazamento; e comparamos
+modelos com e sem `Subsidy_Available`, uma preditora muito forte que não foi identificada como
+derivada do alvo. Também mantemos o tratamento dos valores no piso de renda e deslocamento e a
+winsorização definidos no [plano de pré-processamento do EDA](../eda/index.md#8-plano-de-pre-processamento).
 
 ## 3. Limpeza e normalização
 
