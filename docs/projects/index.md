@@ -61,3 +61,5 @@ compra), e algumas features (ex. `Subsidy_Available`, `Home_Charging_Possible`) 
 | Data | Decisão | Motivo |
 |------|---------|--------|
 | 2026-09-15 | Dataset: EV Purchase Prediction (Kaggle S6E9). Fase 2: Classificação (não Regressão) | Target `Will_Buy_EV` já é categórico/binário — classificação é a tarefa natural |
+| 2026-11-10 | Classificação: corte de decisão = prevalência de "Yes" no ajuste (0,175), em vez de 0,5 | Espelha o desbalanceamento (17,5% de "Yes"); na validação, o recall sobe de 64% para 91% com F1 praticamente igual — deixar escapar um comprador foi tratado como o erro mais caro |
+| 2026-11-10 | Classificação: métricas em destaque passam a ser PR-AUC (principal, inalterada), recall e ROC AUC/curva ROC | Recall mostra o efeito do corte escolhido; ROC AUC permite comparar com outros grupos da mesma competição |

@@ -50,6 +50,15 @@ Usamos o dataset **Playground Series S6E9 – Predicting Electric Vehicle Purcha
 
 Reportamos também precisão, recall, F1, F1 macro, acurácia balanceada e ROC-AUC como métricas secundárias.
 
+!!! note "Métricas em destaque a partir da etapa 5 (decisão de 2026-11-10)"
+
+    A métrica principal e o critério de sucesso abaixo **não mudam**. Entre as secundárias, passamos a destacar duas, decisão tomada depois dos resultados da etapa 4 e registrada na [página do projeto](../index.md#registro-de-decisoes):
+
+    - **Recall da classe "Yes":** o corte de decisão escolhido (etapa 5) prioriza encontrar compradores, então o recall é o que mostra se esse objetivo foi atingido.
+    - **ROC AUC e curva ROC:** são as métricas que permitem comparar nosso resultado com o de outros grupos que trabalham na mesma competição.
+
+    Precisão e F1 continuam reportadas, porque mostram o custo do recall alto.
+
 **Critério de sucesso (definido antes de treinar a rede):** a PR-AUC da rede no teste, em média de 3 seeds, deve superar a da melhor baseline no teste em pelo menos 1 ponto percentual, e essa diferença deve ser maior que o desvio padrão entre as seeds. O limiar de 1 ponto é uma escolha de julgamento: as duas baselines diferem em apenas 0,08 ponto de PR-AUC na validação, então diferenças bem menores que 1 ponto não se distinguem de ruído.
 
 !!! note "Desbalanceamento"
@@ -161,11 +170,116 @@ Também variamos o peso da classe rara, a largura e profundidade, a ativação e
 - O peso da classe rara reduziu a PR-AUC. O efeito esperado dele é deslocar as probabilidades, o que interessa à escolha do corte (etapa 5), e não à ordenação medida pela PR-AUC.
 - As 3 melhores configurações diferem entre si menos do que o desvio entre seeds, então a escolha final é praticamente um empate. A configuração escolhida supera a base em cerca de 0,1 ponto de PR-AUC, valor maior que o desvio entre seeds (0,05) mas bem abaixo do 1 ponto do critério da etapa 0. A seleção entre 12 configurações na mesma validação também tende a ser levemente otimista, e a estimativa limpa virá do teste.
 
+### Segunda rodada: learning rate menor e mais profundidade
+
+**Motivação.** Na primeira rodada, a melhor época chegou cedo (15 a 30 épocas). Testamos se um passo menor encontra um mínimo melhor e se uma rede mais profunda captura algo que a 64-32 não captura. Partimos das 3 melhores configurações e variamos:
+
+- **learning rate:** 3e-4 e 1e-4 (antes, 1e-3);
+- **profundidade:** 3 camadas (128-64-32) e 4 camadas (128-64-32-16);
+- **as duas mudanças juntas:** 128-64-32 com lr 3e-4.
+
+O protocolo é o mesmo da primeira rodada (seed 42, escolha pela PR-AUC de validação, 3 melhores confirmadas com 3 seeds), com no máximo 200 épocas em vez de 100, porque com lr menor o early stopping demora mais. O código está em `code/search2.py`.
+
+**Resultados**, ordenados pela PR-AUC de validação (em %; "Épocas" é o total treinado até o early stopping):
+
+| # | Configuração | Parâmetros | Épocas | Melhor época | PR-AUC val |
+|---|---|---|---|---|---|
+| 1 | Tanh, 128-64-32, lr 3e-4 | 13.185 | 42 | 32 | 73,97 |
+| 2 | Tanh, 128-64-32 | 13.185 | 27 | 17 | 73,95 |
+| 3 | Dropout 0,1 + WD 1e-2, lr 3e-4 | 3.521 | 62 | 52 | 73,93 |
+| 4 | Dropout 0,3, 128-64-32-16 | 13.697 | 38 | 28 | 73,91 |
+| 5 | Tanh, lr 1e-4 | 3.521 | 109 | 99 | 73,90 |
+| 6 | Dropout 0,3, 128-64-32 | 13.185 | 38 | 28 | 73,90 |
+| 7 | Tanh, lr 3e-4 | 3.521 | 58 | 48 | 73,90 |
+| 8 | Dropout 0,1 + WD 1e-2, lr 1e-4 | 3.521 | 124 | 114 | 73,89 |
+| 9 | Dropout 0,3, lr 3e-4 | 3.521 | 58 | 48 | 73,89 |
+| 10 | Dropout 0,3, 128-64-32, lr 3e-4 | 13.185 | 59 | 49 | 73,86 |
+| 11 | Tanh, 128-64-32-16 | 13.697 | 25 | 15 | 73,86 |
+| 12 | Dropout 0,1 + WD 1e-2, 128-64-32-16 | 13.697 | 25 | 15 | 73,83 |
+| 13 | Dropout 0,1 + WD 1e-2, 128-64-32, lr 3e-4 | 13.185 | 43 | 33 | 73,82 |
+| 14 | Dropout 0,1 + WD 1e-2, 128-64-32 | 13.185 | 24 | 14 | 73,81 |
+| 15 | Dropout 0,3, lr 1e-4 | 3.521 | 78 | 68 | 73,80 |
+
+**Confirmação das 3 melhores com 3 seeds:**
+
+| Configuração | PR-AUC val média (%) | Desvio (pontos) | Por seed (%) |
+|---|---|---|---|
+| Dropout 0,1 + WD 1e-2, lr 3e-4 | 73,92 | 0,06 | 73,93 / 73,85 / 73,97 |
+| Tanh, 128-64-32, lr 3e-4 | 73,91 | 0,07 | 73,97 / 73,84 / 73,93 |
+| Tanh, 128-64-32 | 73,89 | 0,07 | 73,95 / 73,81 / 73,91 |
+
+**Interpretação.**
+
+- **Nenhuma variação supera a configuração escolhida na primeira rodada** (73,93 de média). A melhor da segunda rodada fica em 73,92, e as diferenças são menores que o desvio entre seeds. Mantemos a escolha: 64-32 com dropout 0,1 e weight decay 1e-2, lr 1e-3.
+- **Learning rate menor:** a melhor época foi de 15–30 para 50–115, sem ganho de PR-AUC. Nenhuma configuração chegou ao limite de 200 épocas. A parada cedo da primeira rodada era convergência rápida, não falta de treino.
+- **Profundidade:** a rede de 3 camadas com tanh lidera com seed 42, mas empata com a de 2 camadas na média das seeds, com cerca de 4 vezes mais parâmetros. Com 4 camadas, a PR-AUC não melhora e na maioria dos casos piora um pouco.
+- **Plateau:** as 27 configurações das duas rodadas ficaram entre 73,6 e 74,0, a mesma faixa das baselines (73,7 a 73,8). Modelos muito diferentes convergem para o mesmo valor, o que sugere que o limite está na informação que as features trazem, não na arquitetura ou no otimizador.
+
+!!! tip "Para continuar a busca"
+
+    **Ambiente.** Os scripts usam PyTorch, que não está no `requirements.txt` porque o CI do site não precisa dele. No `.venv` do projeto, rode `uv pip install torch matplotlib` (ou `pip install torch`). O `train.csv` da competição deve estar em `data/train.csv`, na raiz do repositório, que é onde `eda/code/eda.py` procura o arquivo.
+
+    **Testar variações novas.** Copie `code/search2.py` (por exemplo, para `search3.py`) e edite a lista em `build_configs()`. Cada configuração é um dicionário com argumentos de `fit()` em `code/train.py`: `hidden_dims`, `activation` (`"relu"` ou `"tanh"`), `dropout`, `batch_norm`, `lr`, `weight_decay`, `batch_size`, `pos_weight`, `max_epochs` e `patience`. Mude o nome do arquivo de saída no fim de `main()` para não sobrescrever `busca2_output.txt`.
+
+    **Regras para manter a comparação válida:**
+
+    - escolha sempre pela **PR-AUC de validação**, e confirme as melhores com 3 seeds antes de concluir algo, porque as diferenças entre configurações são da ordem de 0,05 ponto;
+    - **não use o teste** para escolher nada: ele é usado uma única vez, na etapa 5;
+    - para avaliar uma configuração nova com o corte escolhido e na curva ROC, inclua-a em `code/compare_threshold.py`.
+
+    **Direções ainda não testadas:** batch menor (256), outros otimizadores ou agendamento da taxa de aprendizado, e mudanças no pré-processamento (novas features, interações). Pelo plateau, a última é a que tem mais chance de mudar o resultado.
+
 ## 5. Avaliação no teste
 
 <!-- Exigido: retreinar a config escolhida e avaliar UMA vez; matriz de confusão; precisão/revocação/F1 por classe; F1 macro; ROC-AUC; curva PR e PR-AUC; corte escolhido na validação e justificado pelo custo do erro; tabela rede + baselines no mesmo teste; 3 seeds (média ± desvio); a diferença é maior que a variação?; critério da etapa 0 atingido? -->
 
-(a preencher)
+### Corte de decisão (escolhido na validação)
+
+O corte transforma a probabilidade da rede em "Yes" ou "No". O padrão de 0,5 só é natural quando as classes têm tamanhos parecidos. Comparamos três cortes na validação, com a rede escolhida (seed 42); o código está em `code/threshold.py`:
+
+- **0,5**, o padrão;
+- **a prevalência de "Yes" no ajuste (0,175)**, que espelha o desbalanceamento: um cliente com probabilidade acima da taxa-base é marcado como comprador;
+- **o corte que maximiza o F1 na validação (0,34)**, como referência.
+
+| Corte | Acurácia | Acur. balanceada | Precisão | Recall | F1 | Previstos "Yes" |
+|---|---|---|---|---|---|---|
+| 0,5 | 89,25 | 79,41 | 71,33 | 64,29 | 67,62 | 15,74% |
+| **Prevalência (0,175)** | 84,33 | **87,14** | 52,97 | **91,47** | 67,09 | 30,16% |
+| Máximo F1 (0,34) | 88,17 | 84,90 | 62,66 | 79,86 | **70,22** | 22,26% |
+
+![Precisão, recall e F1 em função do corte de decisão](figures/fig02-corte-validacao.svg)
+/// caption
+**Figura 2** — Precisão, recall e F1 da rede escolhida na validação, em função do corte. As linhas verticais marcam os três cortes comparados.
+///
+
+**Corte escolhido: a prevalência (0,175).** No contexto de compra de veículo elétrico, tratamos como erro mais caro deixar de identificar um comprador (falso negativo) do que abordar alguém que não vai comprar (falso positivo). Com esse corte, a rede encontra 9 em cada 10 compradores, contra 6 em cada 10 com 0,5, e o F1 praticamente não muda (67,1 contra 67,6). O custo é a precisão: cerca de metade dos clientes marcados como "Yes" não compra. O corte de máximo F1 foi descartado porque equilibra os dois erros, o que não reflete a assimetria de custo que assumimos, e porque, otimizado na própria validação, seu F1 é otimista. A decisão está no [registro de decisões do projeto](../index.md#registro-de-decisoes).
+
+### Comparação na validação com o corte escolhido
+
+Antes do teste, aplicamos o mesmo corte às baselines e às 16 redes das duas rodadas (seed 42), na validação; o código está em `code/compare_threshold.py` e a tabela completa, com o corte 0,5 ao lado, em `output/comparacao_corte_output.txt`. Destaques (em %):
+
+| Modelo | Precisão | Recall | F1 | Acur. balanceada | ROC AUC | PR-AUC |
+|---|---|---|---|---|---|---|
+| Regressão logística | 54,35 | 89,86 | 67,73 | 86,94 | 93,57 | 73,72 |
+| Random forest | 53,83 | 90,78 | 67,58 | 87,15 | 93,49 | 73,81 |
+| **Rede escolhida** (64-32, dropout 0,1 + WD 1e-2) | 52,97 | 91,47 | 67,09 | 87,14 | 93,64 | 73,88 |
+| Rede: tanh, 128-64-32, lr 3e-4 | 53,57 | 91,06 | 67,45 | 87,18 | 93,64 | 73,97 |
+| Rede: dropout 0,3, 128-64-32-16 | 51,65 | 92,41 | 66,27 | 87,05 | 93,64 | 73,91 |
+
+![Curvas ROC das baselines e das redes na validação](figures/fig03-roc-validacao.svg)
+/// caption
+**Figura 3** — Curvas ROC na validação: completa (esquerda) e com zoom na região de FPR baixo (direita). Os marcadores pretos mostram onde a rede escolhida opera com o corte 0,5 (círculo) e com o corte 0,175 (quadrado).
+///
+
+**Leitura.**
+
+- **ROC AUC:** todas as redes ficam entre 93,61 e 93,65, contra 93,57 da regressão logística e 93,49 da random forest. As curvas da Figura 3 são praticamente indistinguíveis, mesmo no zoom. Esse é o número a usar na comparação com outros grupos da competição, sempre lembrando que ele foi medido na nossa validação, e não no teste do Kaggle.
+- **O corte pesa mais que o modelo.** Passar de 0,5 para 0,175 aumenta o recall em 25 a 30 pontos e reduz a precisão em 17 a 20 em todos os modelos. Entre os modelos, no mesmo corte, a maior diferença de F1 é de 1,5 ponto, e a acurácia balanceada fica em 86,9–87,2. Na Figura 3, mudar o corte é andar sobre a curva: do círculo (FPR 0,05, recall 0,64) para o quadrado (FPR 0,17, recall 0,91).
+- **Com um corte fixo, a ordem dos modelos reflete calibração.** As redes com dropout 0,3 marcam mais "Yes" e ficam com recall maior e precisão menor, mas a PR-AUC delas é igual à das outras: ordenam igualmente bem, só têm probabilidades um pouco mais altas. Por isso a comparação entre modelos continua sendo feita pela PR-AUC, que não depende do corte.
+
+### Avaliação no teste
+
+(a preencher: retreinar a rede escolhida com 3 seeds, aplicar o corte 0,175 e avaliar rede e baselines uma única vez no teste)
 
 ## 6. Análise de erros
 
@@ -190,8 +304,8 @@ Também variamos o peso da classe rara, a largura e profundidade, a ativação e
 | 1 | Dataset, tarefa, alvo e métrica principal | Playground Series S6E9; classificação binária; `Will_Buy_EV`; PR-AUC da classe "Yes" |
 | 2 | Linhas de treino · validação · teste | 427.945 · 106.987 · 133.733 |
 | 3 | Melhor baseline e sua métrica no teste | (a preencher na etapa 5) |
-| 4 | Rede escolhida: camadas × unidades, nº de parâmetros, regularização | (a preencher) |
-| 5 | Otimizador, learning rate, batch, época de parada | (a preencher) |
+| 4 | Rede escolhida: camadas × unidades, nº de parâmetros, regularização | 2 camadas ocultas (64 → 32), ReLU, 3.521 parâmetros, dropout 0,1 + weight decay 1e-2 |
+| 5 | Otimizador, learning rate, batch, época de parada | AdamW, lr 1e-3, batch 1.024; melhor época 28 (seed 42), early stopping com paciência 10 |
 | 6 | Métrica principal da rede no teste (média ± desvio, 3 seeds) | (a preencher) |
 | 7 | Critério de sucesso atingido? | (a preencher) |
 | 8 | Subgrupo com maior erro e seu valor | (a preencher) |

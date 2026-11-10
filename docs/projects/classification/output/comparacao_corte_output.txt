@@ -1,0 +1,73 @@
+=== Baselines e redes com o corte escolhido (validação; teste não usado) ===
+Corte = prevalência de 'Yes' no ajuste: 0.1746 (antes: 0,5)
+Redes: seed 42, max_epochs = 200, patience = 10. Ordenado pelo F1 no novo corte.
+O Dummy prevê uma probabilidade constante (a taxa de 'Yes'), que fica logo abaixo do corte: marca todos como 'No'.
+
+Métricas com corte 0.1746 (em %):
+                                                    Acurácia  Acurácia balanceada  Precisão  Recall     F1  ROC AUC  PR-AUC
+Modelo                                                                                                                     
+Regressão logística                                    85.04                86.94     54.35   89.86  67.73    93.57   73.72
+Random forest                                          84.79                87.15     53.83   90.78  67.58    93.49   73.81
+Rede: Tanh | lr 3e-04                                  84.75                87.18     53.76   90.91  67.56    93.65   73.90
+Rede: Tanh | lr 1e-04                                  84.67                87.18     53.60   91.03  67.47    93.65   73.90
+Rede: Tanh | 128-64-32 | lr 3e-04                      84.65                87.18     53.57   91.06  67.45    93.64   73.97
+Rede: Tanh | 128-64-32-16                              84.60                87.16     53.46   91.11  67.38    93.62   73.86
+Rede: Dropout 0,1 + WD 1e-2 | lr 3e-04                 84.40                87.20     53.11   91.50  67.21    93.63   73.93
+Rede: Dropout 0,3 | lr 3e-04                           84.39                87.17     53.08   91.46  67.17    93.64   73.89
+Dropout 0,1 + WD 1e-2 (escolhida, 1ª rodada)           84.33                87.14     52.97   91.47  67.09    93.64   73.88
+Rede: Dropout 0,1 + WD 1e-2 | lr 1e-04                 84.26                87.16     52.85   91.63  67.03    93.63   73.89
+Rede: Tanh | 128-64-32                                 84.27                87.14     52.87   91.54  67.02    93.64   73.95
+Rede: Dropout 0,3 | lr 1e-04                           84.21                87.08     52.76   91.51  66.93    93.61   73.80
+Rede: Dropout 0,1 + WD 1e-2 | 128-64-32-16             84.16                87.16     52.67   91.77  66.93    93.62   73.83
+Rede: Dropout 0,1 + WD 1e-2 | 128-64-32                84.14                87.09     52.64   91.61  66.86    93.62   73.81
+Rede: Dropout 0,1 + WD 1e-2 | 128-64-32 | lr 3e-04     84.08                87.11     52.54   91.77  66.82    93.62   73.82
+Rede: Dropout 0,3 | 128-64-32                          83.71                87.05     51.90   92.18  66.41    93.63   73.90
+Rede: Dropout 0,3 | 128-64-32 | lr 3e-04               83.70                87.05     51.87   92.20  66.39    93.63   73.86
+Rede: Dropout 0,3 | 128-64-32-16                       83.57                87.05     51.65   92.41  66.27    93.64   73.91
+Dummy (classe majoritária)                             82.54                50.00      0.00    0.00   0.00    50.00   17.46
+
+Variação em relação ao corte 0,5 (pontos):
+                                                    Δ Precisão  Δ Recall  Δ F1
+Modelo                                                                        
+Regressão logística                                     -16.86     25.47  0.10
+Random forest                                           -18.23     27.16  0.00
+Rede: Tanh | lr 3e-04                                   -17.39     25.83 -0.42
+Rede: Tanh | lr 1e-04                                   -16.93     24.91 -0.78
+Rede: Tanh | 128-64-32 | lr 3e-04                       -17.69     26.33 -0.39
+Rede: Tanh | 128-64-32-16                               -17.52     26.03 -0.52
+Rede: Dropout 0,1 + WD 1e-2 | lr 3e-04                  -18.09     27.05 -0.44
+Rede: Dropout 0,3 | lr 3e-04                            -18.65     27.67 -0.36
+Dropout 0,1 + WD 1e-2 (escolhida, 1ª rodada)            -18.36     27.18 -0.53
+Rede: Dropout 0,1 + WD 1e-2 | lr 1e-04                  -18.32     27.27 -0.56
+Rede: Tanh | 128-64-32                                  -17.98     25.81 -1.17
+Rede: Dropout 0,3 | lr 1e-04                            -19.11     28.73 -0.09
+Rede: Dropout 0,1 + WD 1e-2 | 128-64-32-16              -18.46     27.46 -0.62
+Rede: Dropout 0,1 + WD 1e-2 | 128-64-32                 -18.16     26.43 -1.01
+Rede: Dropout 0,1 + WD 1e-2 | 128-64-32 | lr 3e-04      -18.69     27.16 -0.94
+Rede: Dropout 0,3 | 128-64-32                           -19.76     28.29 -1.14
+Rede: Dropout 0,3 | 128-64-32 | lr 3e-04                -20.20     29.90 -0.44
+Rede: Dropout 0,3 | 128-64-32-16                        -19.62     27.96 -1.42
+Dummy (classe majoritária)                                0.00      0.00  0.00
+
+Métricas com corte 0,5 (em %), para referência:
+                                                    Acurácia  Acurácia balanceada  Precisão  Recall     F1  ROC AUC  PR-AUC
+Modelo                                                                                                                     
+Rede: Tanh | lr 1e-04                                  89.26                80.14     70.53   66.12  68.25    93.65   73.90
+Rede: Tanh | 128-64-32                                 89.29                80.00     70.85   65.73  68.19    93.64   73.95
+Rede: Tanh | lr 3e-04                                  89.29                79.75     71.15   65.08  67.98    93.65   73.90
+Rede: Tanh | 128-64-32-16                              89.25                79.73     70.98   65.08  67.90    93.62   73.86
+Rede: Dropout 0,1 + WD 1e-2 | 128-64-32                89.22                79.74     70.80   65.18  67.87    93.62   73.81
+Rede: Tanh | 128-64-32 | lr 3e-04                      89.28                79.60     71.26   64.73  67.84    93.64   73.97
+Rede: Dropout 0,1 + WD 1e-2 | 128-64-32 | lr 3e-04     89.26                79.54     71.23   64.61  67.76    93.62   73.82
+Rede: Dropout 0,3 | 128-64-32-16                       89.25                79.48     71.27   64.45  67.69    93.64   73.91
+Rede: Dropout 0,1 + WD 1e-2 | lr 3e-04                 89.24                79.46     71.20   64.45  67.65    93.63   73.93
+Regressão logística                                    89.24                79.44     71.21   64.39  67.63    93.57   73.72
+Dropout 0,1 + WD 1e-2 (escolhida, 1ª rodada)           89.25                79.41     71.33   64.29  67.62    93.64   73.88
+Rede: Dropout 0,1 + WD 1e-2 | lr 1e-04                 89.22                79.42     71.17   64.36  67.59    93.63   73.89
+Random forest                                          89.34                79.20     72.06   63.62  67.58    93.49   73.81
+Rede: Dropout 0,1 + WD 1e-2 | 128-64-32-16             89.21                79.39     71.13   64.31  67.55    93.62   73.83
+Rede: Dropout 0,3 | 128-64-32                          89.28                79.27     71.66   63.89  67.55    93.63   73.90
+Rede: Dropout 0,3 | lr 3e-04                           89.28                79.24     71.73   63.79  67.53    93.64   73.89
+Rede: Dropout 0,3 | lr 1e-04                           89.21                78.79     71.87   62.78  67.02    93.61   73.80
+Rede: Dropout 0,3 | 128-64-32 | lr 3e-04               89.20                78.60     72.07   62.30  66.83    93.63   73.86
+Dummy (classe majoritária)                             82.54                50.00      0.00    0.00   0.00    50.00   17.46
