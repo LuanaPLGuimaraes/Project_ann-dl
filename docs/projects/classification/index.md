@@ -213,25 +213,11 @@ O protocolo é o mesmo da primeira rodada (seed 42, escolha pela PR-AUC de valid
 - **Nenhuma variação supera a configuração escolhida na primeira rodada** (73,93 de média). A melhor da segunda rodada fica em 73,92, e as diferenças são menores que o desvio entre seeds. Mantemos a escolha: 64-32 com dropout 0,1 e weight decay 1e-2, lr 1e-3.
 - **Learning rate menor:** a melhor época foi de 15–30 para 50–115, sem ganho de PR-AUC. Nenhuma configuração chegou ao limite de 200 épocas. A parada cedo da primeira rodada era convergência rápida, não falta de treino.
 - **Profundidade:** a rede de 3 camadas com tanh lidera com seed 42, mas empata com a de 2 camadas na média das seeds, com cerca de 4 vezes mais parâmetros. Com 4 camadas, a PR-AUC não melhora e na maioria dos casos piora um pouco.
-- **Plateau:** as 27 configurações das duas rodadas ficaram entre 73,6 e 74,0, a mesma faixa das baselines (73,7 a 73,8). Modelos muito diferentes convergem para o mesmo valor, o que sugere que o limite está na informação que as features trazem, não na arquitetura ou no otimizador.
-
-!!! tip "Para continuar a busca"
-
-    **Ambiente.** Os scripts usam PyTorch, que não está no `requirements.txt` porque o CI do site não precisa dele. No `.venv` do projeto, rode `uv pip install torch matplotlib` (ou `pip install torch`). O `train.csv` da competição deve estar em `data/train.csv`, na raiz do repositório, que é onde `eda/code/eda.py` procura o arquivo.
-
-    **Testar variações novas.** Copie `code/search2.py` (por exemplo, para `search3.py`) e edite a lista em `build_configs()`. Cada configuração é um dicionário com argumentos de `fit()` em `code/train.py`: `hidden_dims`, `activation` (`"relu"` ou `"tanh"`), `dropout`, `batch_norm`, `lr`, `weight_decay`, `batch_size`, `pos_weight`, `max_epochs` e `patience`. Mude o nome do arquivo de saída no fim de `main()` para não sobrescrever `busca2_output.txt`.
-
-    **Regras para manter a comparação válida:**
-
-    - escolha sempre pela **PR-AUC de validação**, e confirme as melhores com 3 seeds antes de concluir algo, porque as diferenças entre configurações são da ordem de 0,05 ponto;
-    - **não use o teste** para escolher nada: ele é usado uma única vez, na etapa 5;
-    - para avaliar uma configuração nova com o corte escolhido e na curva ROC, inclua-a em `code/compare_threshold.py`.
-
-    **Direções ainda não testadas:** batch menor (256), outros otimizadores ou agendamento da taxa de aprendizado, e mudanças no pré-processamento (novas features, interações). Pelo plateau, a última é a que tem mais chance de mudar o resultado.
+- **Plateau:** as 27 configurações das duas rodadas ficaram entre 73,6 e 74,0, a mesma faixa das baselines (73,7 a 73,8). Modelos muito diferentes convergem para o mesmo valor, o que sugeriu, na época, que o limite estava na informação das variáveis. O boosting, testado depois (etapa 5), passou desse patamar, então parte do limite está no que a rede consegue extrair e não só nos dados.
 
 ## 5. Avaliação no teste
 
-<!-- Exigido: retreinar a config escolhida e avaliar UMA vez; matriz de confusão; precisão/revocação/F1 por classe; F1 macro; ROC-AUC; curva PR e PR-AUC; corte escolhido na validação e justificado pelo custo do erro; tabela rede + baselines no mesmo teste; 3 seeds (média ± desvio); a diferença é maior que a variação?; critério da etapa 0 atingido? -->
+Esta etapa tem três partes, na ordem em que aconteceram: a escolha do corte de decisão (na validação), a comparação dos modelos na validação com esse corte e, por último, a avaliação única no teste.
 
 ### Corte de decisão (escolhido na validação)
 
@@ -277,9 +263,46 @@ Antes do teste, aplicamos o mesmo corte às baselines e às 16 redes das duas ro
 - **O corte pesa mais que o modelo.** Passar de 0,5 para 0,175 aumenta o recall em 25 a 30 pontos e reduz a precisão em 17 a 20 em todos os modelos. Entre os modelos, no mesmo corte, a maior diferença de F1 é de 1,5 ponto, e a acurácia balanceada fica em 86,9–87,2. Na Figura 3, mudar o corte é andar sobre a curva: do círculo (FPR 0,05, recall 0,64) para o quadrado (FPR 0,17, recall 0,91).
 - **Com um corte fixo, a ordem dos modelos reflete calibração.** As redes com dropout 0,3 marcam mais "Yes" e ficam com recall maior e precisão menor, mas a PR-AUC delas é igual à das outras: ordenam igualmente bem, só têm probabilidades um pouco mais altas. Por isso a comparação entre modelos continua sendo feita pela PR-AUC, que não depende do corte.
 
-### Avaliação no teste
+### Avaliação final no teste
 
-(a preencher: retreinar a rede escolhida com 3 seeds, aplicar o corte 0,175 e avaliar rede e baselines uma única vez no teste)
+O teste (20% do `train.csv`, 133.733 exemplos) nunca tinha sido usado e foi aberto uma única vez, pelo script `evaluate_test.py`. A rede escolhida na etapa 4 (64 → 32, ReLU, dropout 0,1, weight decay 1e-2) foi retreinada com 3 seeds (42, 43 e 44) nos mesmos 80% de ajuste de antes. O corte foi o da prevalência (0,1746), definido na validação, antes de ver o teste. Os baselines foram treinados nos mesmos dados e avaliados no mesmo teste, com o mesmo corte. Valores em %, média ± desvio entre as 3 seeds (a regressão logística é determinística, então tem uma execução só).
+
+| Modelo | PR-AUC | ROC-AUC | F1 macro | Precisão (Yes) | Recall (Yes) | F1 (Yes) |
+|---|---|---|---|---|---|---|
+| **Rede (64 → 32)** | 73,56 ± 0,06 | 93,67 ± 0,00 | 78,49 ± 0,14 | 53,17 ± 0,27 | 91,27 ± 0,18 | 67,19 ± 0,17 |
+| Regressão logística | 73,36 | 93,59 | 78,98 | 54,31 | 89,87 | 67,70 |
+| Random forest | 73,38 ± 0,05 | 93,52 ± 0,00 | 78,71 ± 0,06 | 53,67 ± 0,10 | 90,65 ± 0,04 | 67,42 ± 0,08 |
+| Boosting (extra) | 74,60 ± 0,09 | 93,90 ± 0,01 | 78,89 ± 0,08 | 53,82 ± 0,15 | 91,30 ± 0,05 | 67,72 ± 0,11 |
+| Acaso | 17,46 | 50,00 | n/a | n/a | n/a | n/a |
+
+O boosting (HistGradientBoosting) foi adicionado depois que definimos o critério de sucesso. Por isso ele é só uma referência e não entra no critério. Ferramenta utilizada apenas como suporte para ver o máximo que conseguiríamos chegar com as diferentes configurações.
+
+**Métricas por classe da rede** (corte 0,1746):
+
+| Classe | Precisão | Recall | F1 |
+|---|---|---|---|
+| No | 97,82 ± 0,04 | 82,99 ± 0,22 | 89,80 ± 0,11 |
+| Yes | 53,17 ± 0,27 | 91,27 ± 0,18 | 67,19 ± 0,17 |
+
+![Curva precisão-recall no teste](figures/fig04-curva-pr-teste.svg)
+/// caption
+**Figura 4** — Curvas precisão-recall no teste (seed 42). O ponto preto marca onde a rede opera com o corte 0,1746 e a linha tracejada é o nível do acaso (17,46%).
+///
+
+![Matriz de confusão da rede no teste](figures/fig05-matriz-confusao-teste.svg)
+/// caption
+**Figura 5** — Matriz de confusão da rede no teste (seed 42, corte 0,1746): contagens e percentual por linha.
+///
+
+**Leitura da matriz de confusão (seed 42).** Dos 23.356 compradores reais, a rede identifica 21.352 (91,4%) e deixa passar 2.004. Em troca, contacta 18.963 não compradores (17,2% deles). Dos clientes que a rede marca como compradores, 53% de fato compram. Esse comportamento era esperado dado o threshold e corte baixo, que foi escolhido para não perder compradores.
+
+**Justificativa do corte pelo custo do erro.** Usar a prevalência como corte equivale a assumir que perder um comprador (falso negativo) custa cerca de 4,7 vezes um contato desperdiçado (falso positivo). Com esse custo, "contactar todos" e "não contactar ninguém" saem pelo mesmo preço (0,825 por exemplo), e um modelo só vale a pena se fizer melhor que isso. A rede ficou em 0,212 por exemplo, cerca de 74% abaixo dos dois extremos. Os baselines ficaram em 0,214 a 0,216 e o boosting em 0,209. A razão de 4,7 é uma suposição declarada e não um custo medido, e ela pressupõe probabilidades bem calibradas, o que não verificamos.
+
+**O critério da etapa 0 foi atingido? Não.** O critério era a rede superar o melhor baseline em pelo menos 1 ponto de PR-AUC, com diferença maior que a variação entre seeds. A rede superou o melhor baseline (random forest, 73,38) em apenas **0,18 ponto**. Essa diferença é cerca de 3 vezes maior que o desvio entre seeds da rede (0,06), mas é pequena em termos absolutos e ficou bem abaixo do 1 ponto desejado. Não medimos a variação causada pela amostra do teste, então não afirmamos que a diferença de 0,18 seja real. No F1 no corte, a regressão logística é até ligeiramente melhor que a rede (67,70 contra 67,19). Portanto, a rede empata com os modelos simples, e o boosting (abaixo) indica que ainda havia sinal a extrair, então o empate não se explica só pelos dados.
+
+**Validação contra teste.** Todos os modelos perdem de 0,3 a 0,4 ponto de PR-AUC ao passar da validação para o teste (rede 73,89 → 73,56; regressão logística 73,72 → 73,36; random forest 73,80 → 73,38; boosting 74,97 → 74,60). A queda parecida em todos sugere que o teste é só um pouco mais difícil, e não que a escolha da configuração tenha se ajustado demais à validação.
+
+**Boosting.** O boosting ficou 1,04 ponto de PR-AUC acima da rede, uma diferença bem maior que a variação entre seeds (0,06 a 0,09). Como ele entrou depois do critério, não muda o veredito acima, mas mostra que ainda havia sinal que a nossa rede não capturou.
 
 ## 6. Análise de erros
 
@@ -303,9 +326,9 @@ Antes do teste, aplicamos o mesmo corte às baselines e às 16 redes das duas ro
 |---|------|-----------|
 | 1 | Dataset, tarefa, alvo e métrica principal | Playground Series S6E9; classificação binária; `Will_Buy_EV`; PR-AUC da classe "Yes" |
 | 2 | Linhas de treino · validação · teste | 427.945 · 106.987 · 133.733 |
-| 3 | Melhor baseline e sua métrica no teste | (a preencher na etapa 5) |
+| 3 | Melhor baseline e sua métrica no teste | Random forest, PR-AUC 73,38 ± 0,05 (regressão logística: 73,36) |
 | 4 | Rede escolhida: camadas × unidades, nº de parâmetros, regularização | 2 camadas ocultas (64 → 32), ReLU, 3.521 parâmetros, dropout 0,1 + weight decay 1e-2 |
 | 5 | Otimizador, learning rate, batch, época de parada | AdamW, lr 1e-3, batch 1.024; melhor época 28 (seed 42), early stopping com paciência 10 |
-| 6 | Métrica principal da rede no teste (média ± desvio, 3 seeds) | (a preencher) |
-| 7 | Critério de sucesso atingido? | (a preencher) |
+| 6 | Métrica principal da rede no teste (média ± desvio, 3 seeds) | PR-AUC 73,56 ± 0,06 |
+| 7 | Critério de sucesso atingido? | Não: +0,18 ponto sobre a melhor baseline, contra os +1 ponto exigidos |
 | 8 | Subgrupo com maior erro e seu valor | (a preencher) |

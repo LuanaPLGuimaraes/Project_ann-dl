@@ -1,7 +1,8 @@
 """Dados para a rede: divisão treino/validação e tensores PyTorch.
 
 Usa exatamente a mesma validação das baselines (20% do treino, estratificada,
-seed 42). O teste oficial NÃO é usado aqui: só entra na etapa 5.
+seed 42). O teste oficial não é usado aqui por padrão, ele só entra na etapa 5
+(include_test=True, chamado apenas por evaluate_test.py).
 
     python docs/projects/classification/code/data_prep.py
 """
@@ -22,9 +23,12 @@ from preprocess import build_preprocessor, prepare_xy  # type: ignore[reportMiss
 VALIDATION_SIZE = 0.2
 
 
-def load_tensors(use_subsidy: bool = True) -> dict:
-    """Devolve X/y de ajuste e de validação como tensores float32."""
-    train_df, _test_df = load_split()  # o teste é descartado de propósito
+def load_tensors(use_subsidy: bool = True, include_test: bool = False) -> dict:
+    """Devolve X/y de ajuste e de validação como tensores float32.
+
+    Com include_test=True devolve também X_test/y_test (só a etapa 5 usa).
+    """
+    train_df, test_df = load_split()
     X, y = prepare_xy(train_df, use_subsidy=use_subsidy)
     X_fit, X_valid, y_fit, y_valid = train_test_split(
         X,
@@ -44,13 +48,20 @@ def load_tensors(use_subsidy: bool = True) -> dict:
     def to_y(series) -> torch.Tensor:
         return torch.tensor(series.to_numpy(dtype=np.float32))
 
-    return {
+    data = {
         "X_fit": to_x(X_fit_t),
         "y_fit": to_y(y_fit),
         "X_valid": to_x(X_valid_t),
         "y_valid": to_y(y_valid),
         "n_inputs": X_fit_t.shape[1],
     }
+
+    if include_test:  # só a etapa 5 chega aqui
+        X_test, y_test = prepare_xy(test_df, use_subsidy=use_subsidy)
+        data["X_test"] = to_x(preprocessor.transform(X_test))
+        data["y_test"] = to_y(y_test)
+
+    return data
 
 
 if __name__ == "__main__":
