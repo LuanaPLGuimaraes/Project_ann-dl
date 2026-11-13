@@ -1,0 +1,221 @@
+Previsões da rede (seed 42) no TESTE, corte 0.1746, custo FN/FP = 4.73
+Colunas: recall, FPR (FP entre os 'No'), precisão, erro % = (FP+FN)/n, custo = (FP + c*FN)/n.
+
+grupo      n  % Yes real  recall   FPR  precisão  erro %  custo
+GERAL 133733       17.46   91.42 17.18     52.96   15.68   0.21
+
+== Erro por classe real (faixas do alvo) ==
+     grupo      n  % Yes real  recall   FPR  precisão  erro %  custo
+ real = No 110377        0.00     NaN 17.18      0.00   17.18   0.17
+real = Yes  23356      100.00   91.42   NaN    100.00    8.58   0.41
+
+== Calibração: probabilidade prevista x fração real de 'Yes' ==
+                  n  prob_media  pct_yes_real
+faixa                                        
+[0.0, 0.05)   80439        0.93          0.89
+[0.05, 0.1)    6767        7.11          7.06
+[0.1, 0.175)   6212       13.53         13.06
+[0.175, 0.3)   7923       23.61         23.41
+[0.3, 0.5)    10959       39.08         39.05
+[0.5, 0.7)     9590       60.83         59.91
+[0.7, 0.9)    11162       79.16         79.38
+[0.9, 1.0)      681       91.68         90.01
+
+== Gender ==
+ grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+Female 58980       17.92   91.80 17.41     53.52   15.76   0.21
+  Male 73719       17.12   91.10 16.98     52.56   15.60   0.21
+ Other  1034       15.76   91.41 18.03     48.69   16.54   0.22
+
+== City_Type ==
+   grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+   Rural 24855       19.33   91.80 18.51     54.30   16.52   0.22
+Suburban 51044       17.94   91.63 17.54     53.31   15.90   0.21
+   Urban 57834       16.25   91.02 16.32     51.97   15.12   0.21
+
+== Current_Car_Type ==
+    grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+Hatchback 15871       17.77   91.49 16.86     53.98   15.37   0.21
+      SUV 49296       18.02   92.11 18.10     52.79   16.26   0.22
+    Sedan 60813       17.23   90.91 16.53     53.37   15.25   0.21
+    Truck  7753       15.19   90.58 17.14     48.63   15.97   0.21
+
+== Home_Charging_Possible ==
+grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+   No 41224       12.78   87.89 13.90     48.08   13.67   0.19
+  Yes 92509       19.55   92.45 18.76     54.50   16.57   0.22
+
+== Subsidy_Available ==
+grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+   No 49804        0.59    0.00  0.01      0.00    0.61   0.03
+  Yes 83929       27.48   92.59 31.14     52.97   24.62   0.32
+
+== Number_of_Cars_Owned ==
+grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+    1 57430       17.20   91.70 17.25     52.47   15.71   0.21
+    2 59661       17.71   91.21 17.25     53.22   15.75   0.22
+    3 13878       17.64   91.79 16.67     54.12   15.18   0.21
+    4  2764       16.86   88.41 16.75     51.69   15.88   0.23
+
+== Environmental_Concern_Level ==
+grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+    1 29510        0.52    0.00  0.00       NaN    0.52   0.02
+    2 26993        2.06    1.98  0.23     15.07    2.25   0.10
+    3 25180       11.26   71.64 23.03     28.30   23.63   0.36
+    4 26171       24.66   95.13 40.28     43.59   31.55   0.36
+    5 25879       51.62   98.59 46.43     69.38   23.19   0.26
+
+== Age ==
+         grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+(24.999, 36.0] 35116       17.83   91.17 16.92     53.90   15.47   0.21
+  (36.0, 47.0] 32663       16.97   91.30 17.16     52.08   15.73   0.21
+  (47.0, 58.0] 33479       18.49   91.60 17.34     54.50   15.69   0.21
+  (58.0, 69.0] 32475       16.52   91.63 17.32     51.14   15.84   0.21
+
+== Charging_Stations_Near_Home ==
+        grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+(-0.001, 2.0] 48030       18.88   91.70 17.82     54.49   16.03   0.22
+   (2.0, 4.0] 22432       15.84   90.83 16.97     50.19   15.73   0.21
+   (4.0, 7.0] 33223       16.68   91.30 16.91     51.95   15.54   0.21
+  (7.0, 14.0] 30048       17.28   91.47 16.63     53.47   15.23   0.21
+
+== Charging_Stations_Near_Work ==
+        grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+(-0.001, 3.0] 41839       18.34   91.62 17.96     53.40   16.20   0.22
+   (3.0, 6.0] 28109       16.99   90.72 16.53     52.89   15.30   0.21
+  (6.0, 10.0] 32207       17.18   91.54 17.29     52.35   15.77   0.21
+ (10.0, 19.0] 31578       17.01   91.62 16.63     53.04   15.22   0.21
+
+== Annual_Income_USD ==
+               grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+        piso (30000) 12414        4.48   59.89  7.40     27.50    8.87   0.16
+(38273.999, 72955.0] 30346        9.45   81.06 12.59     40.19   13.19   0.20
+  (72955.0, 87916.0] 30331       15.12   89.42 17.67     47.40   16.60   0.23
+ (87916.0, 105513.0] 30313       20.02   94.94 21.92     52.01   18.55   0.22
+(105513.0, 187822.0] 30329       30.60   95.19 22.62     64.97   17.17   0.23
+
+== Daily_Commute_km ==
+                    grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+                 piso (5) 28774       18.49   91.36 17.79     53.81   16.10   0.22
+(5.098999999999999, 29.0] 26269       20.16   92.39 18.97     55.16   16.68   0.22
+             (29.0, 39.5] 26345       16.99   91.94 17.05     52.47   15.52   0.21
+             (39.5, 50.2] 26259       17.19   91.36 17.12     52.56   15.66   0.21
+             (50.2, 98.3] 26086       14.36   89.59 15.04     49.98   14.37   0.20
+
+== Ranking de subgrupos (n >= 1000) por erro % ==
+                   variável                     grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+Environmental_Concern_Level                         4 26171       24.66   95.13 40.28     43.59   31.55   0.36
+          Subsidy_Available                       Yes 83929       27.48   92.59 31.14     52.97   24.62   0.32
+Environmental_Concern_Level                         3 25180       11.26   71.64 23.03     28.30   23.63   0.36
+Environmental_Concern_Level                         5 25879       51.62   98.59 46.43     69.38   23.19   0.26
+          Annual_Income_USD       (87916.0, 105513.0] 30313       20.02   94.94 21.92     52.01   18.55   0.22
+          Annual_Income_USD      (105513.0, 187822.0] 30329       30.60   95.19 22.62     64.97   17.17   0.23
+           Daily_Commute_km (5.098999999999999, 29.0] 26269       20.16   92.39 18.97     55.16   16.68   0.22
+          Annual_Income_USD        (72955.0, 87916.0] 30331       15.12   89.42 17.67     47.40   16.60   0.23
+
+== Ranking de subgrupos (n >= 1000) por custo ==
+                   variável                grupo     n  % Yes real  recall   FPR  precisão  erro %  custo
+Environmental_Concern_Level                    4 26171       24.66   95.13 40.28     43.59   31.55   0.36
+Environmental_Concern_Level                    3 25180       11.26   71.64 23.03     28.30   23.63   0.36
+          Subsidy_Available                  Yes 83929       27.48   92.59 31.14     52.97   24.62   0.32
+Environmental_Concern_Level                    5 25879       51.62   98.59 46.43     69.38   23.19   0.26
+       Number_of_Cars_Owned                    4  2764       16.86   88.41 16.75     51.69   15.88   0.23
+          Annual_Income_USD (105513.0, 187822.0] 30329       30.60   95.19 22.62     64.97   17.17   0.23
+          Annual_Income_USD   (72955.0, 87916.0] 30331       15.12   89.42 17.67     47.40   16.60   0.23
+                  City_Type                Rural 24855       19.33   91.80 18.51     54.30   16.52   0.22
+
+== FALSOS NEGATIVOS mais graves (comprou, rede deu prob. baixíssima) ==
+          prob  Age  Annual_Income_USD  Daily_Commute_km  Number_of_Cars_Owned  Charging_Stations_Near_Home  Charging_Stations_Near_Work  Environmental_Concern_Level  Gender City_Type Current_Car_Type Home_Charging_Possible Subsidy_Available
+123041  0.0002   45            95793.0               5.0                     3                           13                           18                          1.0    Male     Urban              SUV                    Yes                No
+98712   0.0002   46            91613.0               5.0                     2                            3                           17                          1.0    Male     Urban            Truck                    Yes                No
+115058  0.0010   50           103616.0              45.9                     1                            7                           14                          2.0  Female     Urban        Hatchback                    Yes                No
+38358   0.0010   55            68530.0               5.0                     1                           12                           19                          3.0  Female     Urban            Sedan                     No                No
+37656   0.0011   66            75631.0               5.6                     2                            2                            2                          2.0    Male     Rural              SUV                    Yes                No
+98103   0.0012   54            76638.0              26.7                     2                            6                           11                          3.0  Female     Urban        Hatchback                     No                No
+114562  0.0013   27            30000.0              30.6                     2                            7                            4                          1.0    Male     Urban        Hatchback                     No               Yes
+100040  0.0013   66            84589.0               5.0                     2                            0                            2                          3.0    Male     Rural        Hatchback                    Yes                No
+126609  0.0016   44            74555.0               5.0                     1                           11                            6                          3.0    Male     Urban        Hatchback                    Yes                No
+36218   0.0016   49            81652.0               5.0                     1                            9                           19                          3.0    Male     Urban            Sedan                     No                No
+
+== FALSOS POSITIVOS mais graves (não comprou, rede deu prob. altíssima) ==
+          prob  Age  Annual_Income_USD  Daily_Commute_km  Number_of_Cars_Owned  Charging_Stations_Near_Home  Charging_Stations_Near_Work  Environmental_Concern_Level  Gender City_Type Current_Car_Type Home_Charging_Possible Subsidy_Available
+33017   0.9569   48           131711.0               5.3                     2                            5                           18                          5.0    Male     Urban            Sedan                    Yes               Yes
+113732  0.9556   27           139945.0               5.1                     1                            2                            5                          5.0  Female  Suburban            Sedan                    Yes               Yes
+107835  0.9477   35           149854.0              17.6                     1                            2                            8                          5.0  Female  Suburban              SUV                    Yes               Yes
+7678    0.9403   63           153469.0               5.0                     2                            1                            6                          5.0    Male  Suburban            Truck                    Yes               Yes
+112596  0.9391   36           155959.0              16.9                     2                            2                            3                          5.0    Male     Rural              SUV                    Yes               Yes
+25705   0.9389   49           150121.0              17.8                     2                            5                            9                          5.0  Female  Suburban            Sedan                    Yes               Yes
+101426  0.9387   43           154119.0               5.0                     1                            1                            8                          5.0  Female  Suburban            Sedan                    Yes               Yes
+111210  0.9386   26           142955.0              16.2                     1                            5                            9                          5.0  Female  Suburban              SUV                    Yes               Yes
+62343   0.9370   59           148722.0              18.4                     1                            0                            3                          5.0    Male  Suburban              SUV                    Yes               Yes
+26222   0.9365   59           153602.0               5.0                     1                            5                            8                          5.0    Male  Suburban              SUV                    Yes               Yes
+
+== Padrão dos 300 piores FN: % no grupo dos piores vs. % em todos os compradores (Yes) ==
+              variável     valor  % piores  % classe  razão
+                Gender    Female     47.67     45.26   1.05
+                Gender      Male     52.00     54.04   0.96
+                Gender     Other      0.33      0.70   0.48
+             City_Type     Rural     19.33     20.57   0.94
+             City_Type  Suburban     38.67     39.20   0.99
+             City_Type     Urban     42.00     40.23   1.04
+      Current_Car_Type Hatchback     10.67     12.08   0.88
+      Current_Car_Type       SUV     34.00     38.02   0.89
+      Current_Car_Type     Sedan     49.67     44.85   1.11
+      Current_Car_Type     Truck      5.67      5.04   1.12
+Home_Charging_Possible        No     30.00     22.55   1.33
+Home_Charging_Possible       Yes     70.00     77.45   0.90
+     Subsidy_Available        No     54.00      1.27  42.61
+     Subsidy_Available       Yes     46.00     98.73   0.47
+                     variável  mediana piores  mediana classe
+                          Age           47.00           47.00
+            Annual_Income_USD        87814.00        96483.00
+             Daily_Commute_km           32.55           31.80
+         Number_of_Cars_Owned            2.00            2.00
+  Charging_Stations_Near_Home            4.00            4.00
+  Charging_Stations_Near_Work            6.00            6.00
+  Environmental_Concern_Level            3.00            5.00
+Annual_Income_USD no piso (%)            5.67            2.38
+ Daily_Commute_km no piso (%)           26.33           22.78
+
+== Padrão dos 300 piores FP: % no grupo dos piores vs. % em todos os não compradores (No) ==
+              variável     valor  % piores  % classe  razão
+                Gender    Female     50.33     43.86   1.15
+                Gender      Male     49.33     55.35   0.89
+                Gender     Other      0.33      0.79   0.42
+             City_Type     Rural     26.33     18.17   1.45
+             City_Type  Suburban     38.67     37.95   1.02
+             City_Type     Urban     35.00     43.88   0.80
+      Current_Car_Type Hatchback      8.00     11.82   0.68
+      Current_Car_Type       SUV     39.00     36.62   1.07
+      Current_Car_Type     Sedan     44.33     45.60   0.97
+      Current_Car_Type     Truck      8.67      5.96   1.45
+Home_Charging_Possible        No     10.67     32.58   0.33
+Home_Charging_Possible       Yes     89.33     67.42   1.32
+     Subsidy_Available        No      0.00     44.85   0.00
+     Subsidy_Available       Yes    100.00     55.15   1.81
+                     variável  mediana piores  mediana classe
+                          Age           49.00           47.00
+            Annual_Income_USD       131814.50        82872.00
+             Daily_Commute_km           22.10           34.10
+         Number_of_Cars_Owned            2.00            2.00
+  Charging_Stations_Near_Home            3.00            4.00
+  Charging_Stations_Near_Work            6.00            6.00
+  Environmental_Concern_Level            5.00            2.00
+Annual_Income_USD no piso (%)            0.00           10.74
+ Daily_Commute_km no piso (%)           27.00           21.25
+
+== Importância por permutação (VALIDAÇÃO, rede seed 42) ==
+PR-AUC de referência na validação: 73.89 (esperado ~73,89)
+Queda da PR-AUC (pontos) ao embaralhar cada variável, média ± desvio de 5 repetições:
+  Environmental_Concern_Level     40.77 ± 0.23
+  Subsidy_Available               27.18 ± 0.37
+  Annual_Income_USD               11.43 ± 0.20
+  Home_Charging_Possible           2.35 ± 0.09
+  Daily_Commute_km                 0.86 ± 0.10
+  Charging_Stations_Near_Work      0.29 ± 0.03
+  City_Type                        0.27 ± 0.02
+  Charging_Stations_Near_Home      0.19 ± 0.01
+  Current_Car_Type                 0.04 ± 0.05
+  Number_of_Cars_Owned             0.02 ± 0.02
+  Age                              0.02 ± 0.03
+  Gender                          -0.00 ± 0.02

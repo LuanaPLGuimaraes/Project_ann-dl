@@ -1,0 +1,13 @@
+=== Escolha do corte de decisão (validação; teste não usado) ===
+Modelo: Dropout 0,1 + weight decay 1e-2, 64-32, ReLU, AdamW lr=1e-3, seed 42
+Prevalência de 'Yes' no ajuste: 17.46% (na validação: 17.46%)
+ROC AUC e PR-AUC não dependem do corte: 73.88 (PR-AUC)
+
+Métricas na validação por corte (em %):
+                               Acurácia  Acurácia balanceada  Precisão  Recall     F1  Previstos 'Yes' (%)
+Corte                                                                                                     
+0,5 (padrão)                      89.25                79.41     71.33   64.29  67.62                15.74
+Prevalência (0.1746)              84.33                87.14     52.97   91.47  67.09                30.16
+Máx. F1 na validação (0.3375)     88.17                84.90     62.66   79.86  70.22                22.26
+
+Corte escolhido: prevalência de 'Yes' no ajuste (0.1746).

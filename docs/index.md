@@ -21,8 +21,7 @@ A equipe deste projeto está registrada na [página do projeto](projects/index.m
 
 ### [Projeto](projects/index.md) — em equipe
 
-Um projeto, um dataset, três entregas:
+Um projeto, um dataset, duas entregas:
 
-- [ ] [EDA](projects/eda/index.md)
-- [ ] [Classificação](projects/classification/index.md)
-- [ ] [Generativo](projects/generative/index.md)
+- [x] [EDA](projects/eda/index.md)
+- [x] [Classificação](projects/classification/index.md)

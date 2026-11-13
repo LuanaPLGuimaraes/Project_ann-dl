@@ -1,0 +1,31 @@
+=== Busca, 2ª rodada (seed 42, escolha pela validação) ===
+Variações das 3 melhores da 1ª rodada: lr menor (3e-4, 1e-4) e mais profundidade.
+max_epochs = 200, patience = 10 (early stopping pela loss de validação).
+Referência (1ª rodada, média 3 seeds): Dropout 0,1 + weight decay 1e-2 = 73,93
+Referência (baselines, validação): regressão logística 73,72 | random forest 73,80
+
+PR-AUC de validação na melhor época (em %), ordenada:
+                                    Configuração  Parâmetros  Épocas  Melhor época  Loss treino  Loss val  PR-AUC val  Tempo (s)
+1                    Tanh | 128-64-32 | lr 3e-04       13185      42            32       0.2344    0.2358       73.97         18
+2                               Tanh | 128-64-32       13185      27            17       0.2345    0.2359       73.95         12
+3               Dropout 0,1 + WD 1e-2 | lr 3e-04        3521      62            52       0.2356    0.2359       73.93         21
+4                     Dropout 0,3 | 128-64-32-16       13697      38            28       0.2424    0.2368       73.91         23
+5                                Tanh | lr 1e-04        3521     109            99       0.2343    0.2357       73.90         24
+6                        Dropout 0,3 | 128-64-32       13185      38            28       0.2384    0.2363       73.90         21
+7                                Tanh | lr 3e-04        3521      58            48       0.2343    0.2356       73.90         13
+8               Dropout 0,1 + WD 1e-2 | lr 1e-04        3521     124           114       0.2359    0.2360       73.89         38
+9                         Dropout 0,3 | lr 3e-04        3521      58            48       0.2392    0.2360       73.89         17
+10            Dropout 0,3 | 128-64-32 | lr 3e-04       13185      59            49       0.2393    0.2364       73.86         33
+11                           Tanh | 128-64-32-16       13697      25            15       0.2346    0.2361       73.86         12
+12          Dropout 0,1 + WD 1e-2 | 128-64-32-16       13697      25            15       0.2372    0.2361       73.83         16
+13  Dropout 0,1 + WD 1e-2 | 128-64-32 | lr 3e-04       13185      43            33       0.2363    0.2362       73.82         24
+14             Dropout 0,1 + WD 1e-2 | 128-64-32       13185      24            14       0.2363    0.2363       73.81         14
+15                        Dropout 0,3 | lr 1e-04        3521      78            68       0.2412    0.2368       73.80         23
+
+=== Confirmação das 3 melhores com 3 seeds (42, 43, 44) ===
+                       Configuração  PR-AUC val média (%)  Desvio (pontos)           Por seed (%)
+1  Dropout 0,1 + WD 1e-2 | lr 3e-04                 73.92             0.06  73.93 / 73.85 / 73.97
+2       Tanh | 128-64-32 | lr 3e-04                 73.91             0.07  73.97 / 73.84 / 73.93
+3                  Tanh | 128-64-32                 73.89             0.07  73.95 / 73.81 / 73.91
+
+Melhor da 2ª rodada (maior média nas 3 seeds): Dropout 0,1 + WD 1e-2 | lr 3e-04

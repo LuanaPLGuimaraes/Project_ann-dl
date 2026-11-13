@@ -4,7 +4,7 @@
 
     [Projects](https://insper.github.io/ann-dl/){:target='_blank'}
 
-O projeto é **um só**, feito em equipe sobre **o mesmo dataset**, e entregue em três partes
+O projeto é **um só**, feito em equipe sobre **o mesmo dataset**, e entregue em duas partes
 ao longo do semestre, cada uma com data e peso próprios.
 
 ## Equipe
@@ -12,15 +12,14 @@ ao longo do semestre, cada uma com data e peso próprios.
 | Nome completo | E-mail | GitHub |
 |---------------|--------|--------|
 | Luana Prado Lopes Guimaraes | luanaplg@al.insper.edu.br | LuanaPLGuimaraes |
-| Laura Pontiroli Machado | laurapm@alinsper.edu.br | laupontiroli |
+| Laura Pontiroli Machado | laurapm@al.insper.edu.br | laupontiroli |
 
-## As três entregas
+## As entregas
 
 | # | Entrega | Página |
 |---|---------|--------|
 | 1 | EDA | [EDA](eda/index.md) |
 | 2 | Classificação | [Classificação](classification/index.md) |
-| 3 | Generativo | [Generativo](generative/index.md) |
 
 Datas e pesos são da sua edição — veja o
 [overview](https://insper.github.io/ann-dl/pt/2026.2/){:target='_blank'}.
@@ -52,12 +51,15 @@ compra), e algumas features (ex. `Subsidy_Available`, `Home_Charging_Possible`) 
 
 ## Status
 
-- [x] **1. EDA** — proposta em andamento
-- [ ] **2. Classificação**
-- [ ] **3. Generativo**
+- [x] **1. EDA** — entregue
+- [x] **2. Classificação** — entregue
 
 ## Registro de decisões
 
 | Data | Decisão | Motivo |
 |------|---------|--------|
 | 2026-09-15 | Dataset: EV Purchase Prediction (Kaggle S6E9). Fase 2: Classificação (não Regressão) | Target `Will_Buy_EV` já é categórico/binário — classificação é a tarefa natural |
+| 2026-11-10 | Classificação: corte de decisão = prevalência de "Yes" no ajuste (0,175), em vez de 0,5 | Espelha o desbalanceamento (17,5% de "Yes"); na validação, o recall sobe de 64% para 91% com F1 praticamente igual — deixar escapar um comprador foi tratado como o erro mais caro |
+| 2026-11-10 | Classificação: métricas em destaque passam a ser PR-AUC (principal, inalterada), recall e ROC AUC/curva ROC | Recall mostra o efeito do corte escolhido; ROC AUC permite comparar com outros grupos da mesma competição |
+| 2026-11-13 | Classificação: boosting (HistGradientBoosting) incluído na avaliação do teste como referência extra, fora do critério de sucesso | Mostra o ganho possível com outro tipo de modelo sem alterar o critério definido antes de treinar a rede |
+| 2026-11-13 | O projeto passa a ter duas entregas (EDA e Classificação): a entrega 3 (Generativo) não será realizada e saiu do site | A entrega deixou de existir |

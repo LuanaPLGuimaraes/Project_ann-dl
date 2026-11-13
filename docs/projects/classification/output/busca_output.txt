@@ -1,0 +1,27 @@
+=== Busca de configurações (seed 42, escolha pela validação) ===
+Peso da classe rara usado: 4.73 (proporção No/Yes no ajuste)
+Referência (baselines, validação): regressão logística 73,72 | random forest 73,80
+Nota: a loss com peso de classe não é comparável com a das demais configurações.
+
+PR-AUC de validação na melhor época (em %), ordenada:
+                       Configuração  Parâmetros  Melhor época  Loss treino  Loss val  PR-AUC val  Tempo (s)
+1                     Ativação tanh        3521            17       0.2348    0.2359       73.90         17
+2                       Dropout 0,3        3521            16       0.2394    0.2360       73.89         37
+3   Dropout 0,1 + weight decay 1e-2        3521            28       0.2354    0.2358       73.89         53
+4                       Dropout 0,1        3521            28       0.2354    0.2359       73.86         55
+5                     Menor (32-16)        1249            32       0.2342    0.2360       73.81         24
+6                 Weight decay 1e-2        3521            17       0.2341    0.2363       73.79         19
+7                         BatchNorm        3713            32       0.2330    0.2365       73.79         37
+8   Base (64-32, sem regularização)        3521            17       0.2342    0.2364       73.79         19
+9                 Weight decay 1e-4        3521            17       0.2341    0.2364       73.76         19
+10              Mais larga (128-64)       11137            15       0.2336    0.2366       73.75         29
+11               Learning rate 3e-4        3521            35       0.2340    0.2367       73.71         30
+12       Peso da classe rara (4.73)        3521            15       0.5127    0.5184       73.58         20
+
+=== Confirmação das 3 melhores com 3 seeds (42, 43, 44) ===
+                      Configuração  PR-AUC val média (%)  Desvio (pontos)           Por seed (%)
+1  Dropout 0,1 + weight decay 1e-2                 73.93             0.05  73.89 / 73.91 / 73.99
+2                    Ativação tanh                 73.89             0.01  73.90 / 73.90 / 73.88
+3                      Dropout 0,3                 73.88             0.03  73.89 / 73.85 / 73.91
+
+Configuração escolhida (maior média nas 3 seeds): Dropout 0,1 + weight decay 1e-2
